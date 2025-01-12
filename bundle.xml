@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<bundle>
+  <!-- each section should correspond to a Python module -->
+  <binaries>
+  </binaries>
+  <libraries>
+  </libraries>
+  <resources>
+    <!-- generic stuff below Resources -->
+  </resources>
+  <icon>
+  </icon>
+  <locales>
+    <!-- should go in Resources/locale, be able to access mo files and also add them to plist -->
+  </locales>
+  <gtk3>
+    <!-- special module to take care of gtk specifis: pixbuf loader, input modules, regenerating typelib from gir, theme/icon ... -->
+    <css>
+      <!-- making changes to css file -->
+    </ccs>
+  </gtk3>
+  <gtk4>
+  </gtk4>
+  <frameworks>
+  </frameworks>
+  <fontconfig/>  <!-- for setting up etc and configs and stuff -->
+</bundle>
