@@ -2,11 +2,20 @@
 <bundle>
   <!-- each section should correspond to a Python module -->
   <binaries>
+    <!-- umdrehen: text ist der source_path wie bei den anderne auch
+       tagert wird ja immer MacOS sein
+       -->
+    <binary source_path='foo'>Meld</binary>
+    <binary source_path='foo'>Meld2</binary>
   </binaries>
   <libraries>
+    <library>lib/libxml2.dylib</library>
+    <library>liblzma5.dylib</library>
   </libraries>
   <resources>
     <!-- generic stuff below Resources -->
+    <resource>share/glib-2.0</resource>
+    <resource target_dir="foo">share/rnote</resource>
   </resources>
   <icon>
   </icon>
@@ -17,7 +26,7 @@
     <!-- special module to take care of gtk specifis: pixbuf loader, input modules, regenerating typelib from gir, theme/icon ... -->
     <css>
       <!-- making changes to css file -->
-    </ccs>
+    </css>
   </gtk3>
   <gtk4>
   </gtk4>
