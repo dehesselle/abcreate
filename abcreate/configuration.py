@@ -23,8 +23,6 @@ class Configuration:
         def prefix_path(self, value):
             _prefix_path = Path(value)
 
-    source: Source
-
     def resolve_path(self, path: str) -> Path:
         def render_template(text: str) -> str:
             class Pattern(str, Enum):
@@ -45,6 +43,9 @@ class Configuration:
             return (self.prefix_path / path).absolute()
         else:
             return Path(path).absolute()
+
+    source: Source
+    target_dir: str
 
 
 configuration = Configuration()

@@ -1,5 +1,7 @@
 import logging
 from typing import List
+from pathlib import Path
+from shutil import rmtree, copy
 
 from pydantic_xml import BaseXmlModel, element, wrapped
 
@@ -7,6 +9,8 @@ from .binary import Binary
 from .library import Library
 from .resource import Resource
 from .icon import Icon
+from .plist import Plist
+from abcreate.configuration import configuration as config
 
 log = logging.getLogger("bundle")
 
@@ -23,28 +27,26 @@ class Bundle(BaseXmlModel, tag="bundle"):
     )
     icon: Icon
 
+    def _check(self):
+        if not self.binaries.count:
+            log.critical("no main binary")
 
-# class Bundle:
-#     def __init__(self, tree: etree.Element, source_dir: str):
-#         self.tree = tree
-#         self.components = "foobar"
-#         self.source_dir = source_dir
+    def create(self, target_dir: str):
+        self._check()
+        main_binary = self.binaries[0]
+        if main_binary.name:
+            bundle_dir = target_dir / Path(main_binary.name).with_suffix(".app.tmp")
+        else:
+            bundle_dir = target_dir / Path(
+                Path(main_binary.source_path).name
+            ).with_suffix(".app.tmp")
 
-#     def check_configuration(self):
-#         for element in self.xml:
-#             try:
-#                 module_name = f"abcreate.components.{element.tag}"
-#                 module = import_module(module_name)
-#                 _class = getattr(module, module_name.capitalize())
-#                 log.debug(f"module found: {element.tag}")
-#             except ModuleNotFoundError as e:
-#                 log.error(f"bundle will be broken, no module to handle '{element.tag}'")
+        if bundle_dir.exists():
+            log.info(f"removing {bundle_dir.as_posix()}")
+            rmtree(bundle_dir)
 
-#     def create(self, target_dir: Path):
-#         # tree = self.xml.xpath("/bundle/binaries/binary")
-#         tree = self.tree.xpath("/bundle/binaries")
-#         print("oof", type(tree))
-#         binaries = Binaries(
-#             tree, "/Users/rene/.local/tmp/bundle", "/Users/rene/.local/tmp"
-#         )
-#         binaries.main_binary()
+        log.info(f"creating {bundle_dir.as_posix()}")
+        bundle_dir.mkdir(parents=True)
+
+        Plist(bundle_dir).install()
+        Plist(bundle_dir).CFBundleExecutable = "foo"

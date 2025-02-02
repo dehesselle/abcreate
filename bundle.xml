@@ -5,8 +5,7 @@
     <!-- umdrehen: text ist der source_path wie bei den anderne auch
        tagert wird ja immer MacOS sein
        -->
-    <binary source_path='foo'>Meld</binary>
-    <binary source_path='foo'>Meld2</binary>
+    <binary name="Foo">Meld</binary>
   </binaries>
   <libraries>
     <library>lib/libxml2.dylib</library>

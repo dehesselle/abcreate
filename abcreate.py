@@ -53,11 +53,9 @@ def main():
                 print(b.name)
 
             if args.target_dir:
-                pass
+                bundle.create(args.target_dir)
             else:
-                pass
-                # os.getcwd()
-
+                bundle.create(os.getcwd())
         except Exception as e:
             log.critical(e.msg)
     else:
@@ -77,9 +75,7 @@ if __name__ == "__main__":
     )
 
     log.info("begin")
-
-    print(config.resolve_path("${env:HOME}/hanse"))
-    # main()
+    main()
     log.info("end")
 
     try:
