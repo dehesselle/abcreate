@@ -25,12 +25,12 @@ class Configuration:
 
     def resolve_path(self, path: str) -> Path:
         def render_template(text: str) -> str:
-            class Pattern(str, Enum):
+            class Pattern(Enum):
                 ENVIRONMENT_VARIABLE = r".*\${env:(\w+)}"
 
-            if match := re.match(Pattern.ENVIRONMENT_VARIABLE, path):
+            if match := re.match(Pattern.ENVIRONMENT_VARIABLE.value, path):
                 return re.sub(
-                    Pattern.ENVIRONMENT_VARIABLE, os.getenv(match.group(1)), path
+                    Pattern.ENVIRONMENT_VARIABLE.value, os.getenv(match.group(1)), path
                 )
             else:
                 return text

@@ -31,7 +31,7 @@ class CollectStatisticsHandler(logging.StreamHandler):
         return logging.ERROR in cls.message_counter
 
 
-class Command(str, Enum):
+class Command(Enum):
     CREATE = "create"
 
 
@@ -51,14 +51,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="create an application bundle")
     p_commands = parser.add_subparsers(help="available commands", dest="command")
 
-    p_create = p_commands.add_parser(Command.CREATE, help="create application bundle")
+    p_create = p_commands.add_parser(
+        Command.CREATE.value, help="create application bundle"
+    )
     p_create.add_argument("file")
     p_create.add_argument("-s", "--source_dir", required=True, help="source directory")
     p_create.add_argument("-t", "--target_dir", required=False, help="target directory")
 
     args = parser.parse_args()
 
-    if args.command == Command.CREATE:
+    if args.command == Command.CREATE.value:
         try:
             xml_doc = Path(args.file).read_text()
             bundle = Bundle.from_xml(xml_doc)

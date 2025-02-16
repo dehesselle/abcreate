@@ -11,7 +11,7 @@ log = logging.getLogger("plist")
 class Plist:
     PLIST_NAME = "Info.plist"
 
-    class Key(str, Enum):
+    class Key(Enum):
         CFBUNDLEEXECUTABLE = "CFBundleExecutable"
         CFBUNDLEICONFILE = "CFBundleIconFile"
 
@@ -56,16 +56,16 @@ class Plist:
 
     @property
     def CFBundleExecutable(self) -> str:
-        return self._read(self.Key.CFBUNDLEEXECUTABLE)
+        return self._read(self.Key.CFBUNDLEEXECUTABLE.value)
 
     @CFBundleExecutable.setter
     def CFBundleExecutable(self, value):
-        self._write(self.Key.CFBUNDLEEXECUTABLE, value)
+        self._write(self.Key.CFBUNDLEEXECUTABLE.value, value)
 
     @property
     def CFBundleIconFile(self) -> str:
-        return self._read(self.Key.CFBUNDLEICONFILE)
+        return self._read(self.Key.CFBUNDLEICONFILE.value)
 
     @CFBundleIconFile.setter
     def CFBundleIconFile(self, value):
-        self._write(self.Key.CFBUNDLEICONFILE, value)
+        self._write(self.Key.CFBUNDLEICONFILE.value, value)
