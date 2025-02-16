@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import logging
 import argparse
 from pathlib import Path
@@ -28,12 +26,28 @@ class CollectStatisticsHandler(logging.StreamHandler):
         except KeyError:
             self.message_counter[record.levelno] = 1
 
+    @classmethod
+    def has_errors(cls) -> bool:
+        return logging.ERROR in cls.message_counter
+
 
 class Command(str, Enum):
     CREATE = "create"
 
 
-def main():
+def main() -> None:
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)-23s|%(name)-10s|%(levelname)-8s|%(message)s",
+        handlers=[
+            logging.FileHandler("abcreate.log"),
+            logging.StreamHandler(),
+            CollectStatisticsHandler(),
+            ExitOnCriticalHandler(),
+        ],
+    )
+    log.debug("begin log")
+
     parser = argparse.ArgumentParser(description="create an application bundle")
     p_commands = parser.add_subparsers(help="available commands", dest="command")
 
@@ -59,27 +73,10 @@ def main():
         except Exception as e:
             log.critical(e.msg)
     else:
+        log.error("wrong invocation")
         parser.print_usage()
 
+    log.debug("end log")
 
-if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)-23s|%(name)-10s|%(levelname)-8s|%(message)s",
-        handlers=[
-            logging.FileHandler("abcreate.log"),
-            logging.StreamHandler(),
-            CollectStatisticsHandler(),
-            ExitOnCriticalHandler(),
-        ],
-    )
-
-    log.info("begin")
-    main()
-    log.info("end")
-
-    try:
-        if CollectStatisticsHandler.message_counter[logging.ERROR] > 0:
-            exit(1)
-    except KeyError:
-        pass
+    if CollectStatisticsHandler.has_errors():
+        exit(1)

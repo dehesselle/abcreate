@@ -1,0 +1,19 @@
+[project]
+name = "abcreate"
+version = "0.1.0"
+description = "application bundle creator"
+readme = "README.md"
+authors = [
+    { name = "René de Hesselle", email = "dehesselle@web.de" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic-xml>=2.14.1",
+]
+
+[project.scripts]
+abcreate = "abcreate:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
