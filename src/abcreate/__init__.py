@@ -8,6 +8,11 @@ import os
 from abcreate.bundle import Bundle
 from abcreate.configuration import configuration as config
 
+try:
+    from abcreate._version import version
+except ImportError:
+    version = "0.0.0"
+
 log = logging.getLogger("main")
 
 
@@ -46,7 +51,7 @@ def main() -> None:
             ExitOnCriticalHandler(),
         ],
     )
-    log.debug("begin log")
+    log.debug(f"abcreate {version}")
 
     parser = argparse.ArgumentParser(description="create an application bundle")
     p_commands = parser.add_subparsers(help="available commands", dest="command")

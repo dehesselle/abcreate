@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+src/abcreate/_version.py
 
 # Virtual environments
 .venv
