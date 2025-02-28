@@ -70,13 +70,10 @@ def main() -> None:
             xml_doc = Path(args.file).read_text()
             bundle = Bundle.from_xml(xml_doc)
 
-            for b in bundle.binaries:
-                print(b.name)
-
             if args.target_dir:
-                bundle.create(args.target_dir)
+                bundle.create(args.target_dir, args.source_dir)
             else:
-                bundle.create(os.getcwd())
+                bundle.create(os.getcwd(), args.source_dir)
         except Exception as e:
             log.critical(e.msg)
     else:

@@ -31,15 +31,10 @@ class Bundle(BaseXmlModel, tag="bundle"):
         if not self.binaries.count:
             log.critical("no main binary")
 
-    def create(self, target_dir: str):
+    def create(self, target_dir: str, source_dir: str):
         self._check()
         main_binary = self.binaries[0]
-        if main_binary.name:
-            bundle_dir = target_dir / Path(main_binary.name).with_suffix(".app.tmp")
-        else:
-            bundle_dir = target_dir / Path(
-                Path(main_binary.source_path).name
-            ).with_suffix(".app.tmp")
+        bundle_dir = target_dir / Path(main_binary.target_name).with_suffix(".app.tmp")
 
         if bundle_dir.exists():
             log.info(f"removing {bundle_dir.as_posix()}")
@@ -49,4 +44,12 @@ class Bundle(BaseXmlModel, tag="bundle"):
         bundle_dir.mkdir(parents=True)
 
         Plist(bundle_dir).install()
-        Plist(bundle_dir).CFBundleExecutable = "foo"
+        Plist(bundle_dir).CFBundleExecutable = main_binary.target_name
+
+        source_dir = Path(source_dir)
+
+        for binary in self.binaries:
+            binary.install(bundle_dir, source_dir)
+
+        for library in self.libraries:
+            library.install(bundle_dir, source_dir)

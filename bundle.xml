@@ -5,16 +5,16 @@
     <!-- umdrehen: text ist der source_path wie bei den anderne auch
        tagert wird ja immer MacOS sein
        -->
-    <binary name="Foo">Meld</binary>
+    <binary name="Meld">meldlauncher</binary>
   </binaries>
   <libraries>
     <library>lib/libxml2.dylib</library>
-    <library>liblzma5.dylib</library>
+    <library>liblzma.5.dylib</library>
   </libraries>
   <resources>
     <!-- generic stuff below Resources -->
     <resource>share/glib-2.0</resource>
-    <resource target_dir="foo">share/rnote</resource>
+    <resource dir="foo">share/rnote</resource>
   </resources>
   <icon>
   </icon>
