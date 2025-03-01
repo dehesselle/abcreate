@@ -5,7 +5,7 @@ from shutil import rmtree, copy
 
 from pydantic_xml import BaseXmlModel, element, wrapped
 
-from .binary import Binary
+from .executable import Executable
 from .library import Library
 from .resource import Resource
 from .icon import Icon
@@ -16,8 +16,8 @@ log = logging.getLogger("bundle")
 
 
 class Bundle(BaseXmlModel, tag="bundle"):
-    binaries: List[Binary] = wrapped(
-        "binaries", element(tag="binary", default_factory=list)
+    executables: List[Executable] = wrapped(
+        "executables", element(tag="executable", default_factory=list)
     )
     libraries: List[Library] = wrapped(
         "libraries", element(tag="library", default_factory=list)
@@ -28,13 +28,15 @@ class Bundle(BaseXmlModel, tag="bundle"):
     icon: Icon
 
     def _check(self):
-        if not self.binaries.count:
-            log.critical("no main binary")
+        if not self.executables.count:
+            log.critical("no main executable")
 
     def create(self, target_dir: str, source_dir: str):
         self._check()
-        main_binary = self.binaries[0]
-        bundle_dir = target_dir / Path(main_binary.target_name).with_suffix(".app.tmp")
+        main_executable = self.executables[0]
+        bundle_dir = target_dir / Path(main_executable.target_name).with_suffix(
+            ".app.tmp"
+        )
 
         if bundle_dir.exists():
             log.info(f"removing {bundle_dir.as_posix()}")
@@ -44,12 +46,12 @@ class Bundle(BaseXmlModel, tag="bundle"):
         bundle_dir.mkdir(parents=True)
 
         Plist(bundle_dir).install()
-        Plist(bundle_dir).CFBundleExecutable = main_binary.target_name
+        Plist(bundle_dir).CFBundleExecutable = main_executable.target_name
 
         source_dir = Path(source_dir)
 
-        for binary in self.binaries:
-            binary.install(bundle_dir, source_dir)
+        for executable in self.executables:
+            executable.install(bundle_dir, source_dir)
 
         for library in self.libraries:
             library.install(bundle_dir, source_dir)

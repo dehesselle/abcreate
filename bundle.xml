@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <bundle>
   <!-- each section should correspond to a Python module -->
-  <binaries>
+  <executables>
     <!-- umdrehen: text ist der source_path wie bei den anderne auch
        tagert wird ja immer MacOS sein
        -->
-    <binary name="Meld">meldlauncher</binary>
-  </binaries>
+    <executable name="Meld">meldlauncher</executable>
+  </executables>
   <libraries>
     <library>lib/libxml2.dylib</library>
     <library>liblzma.5.dylib</library>

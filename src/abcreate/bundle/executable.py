@@ -8,10 +8,10 @@ from pydantic_xml import BaseXmlModel, attr
 from .linkedobject import LinkedObject
 from .library import Library
 
-log = logging.getLogger("binary")
+log = logging.getLogger("exe")
 
 
-class Binary(BaseXmlModel):
+class Executable(BaseXmlModel):
     name: Optional[str] = attr(default=None)
     source_path: str
 
