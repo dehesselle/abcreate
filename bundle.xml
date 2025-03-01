@@ -16,6 +16,10 @@
     <resource target_dir="Frameworks">lib/gtk-3.0/3.0.0/immodules.cache</resource>
     <resource target_dir="Frameworks">lib/gdk-pixbuf-2.0/2.10.0/loaders.cache</resource>
     <resource>share/glib-2.0</resource>
+    <resource>share/gtksourceview-4</resource>
+    <resource>share/icons</resource>
+    <resource>share/meld</resource>
+    <resource>share/themes</resource>
   </resources>
   <frameworks>
     <framework>tmp/Python.framework</framework>
