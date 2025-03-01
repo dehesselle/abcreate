@@ -2,4 +2,4 @@ from pydantic_xml import BaseXmlModel
 
 
 class Icon(BaseXmlModel):
-    path: str
+    source_path: str

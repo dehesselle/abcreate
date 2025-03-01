@@ -6,11 +6,12 @@ from shutil import rmtree
 from pydantic_xml import BaseXmlModel, element, wrapped
 
 from .executable import Executable
-from .library import Library
-from .resource import Resource
 from .framework import Framework
 from .icon import Icon
+from .library import Library
+from .locale import Locale
 from .plist import Plist
+from .resource import Resource
 from abcreate.configuration import configuration as config
 
 log = logging.getLogger("bundle")
@@ -20,16 +21,19 @@ class Bundle(BaseXmlModel, tag="bundle"):
     executables: List[Executable] = wrapped(
         "executables", element(tag="executable", default_factory=list)
     )
-    libraries: List[Library] = wrapped(
-        "libraries", element(tag="library", default_factory=list)
-    )
-    resources: List[Resource] = wrapped(
-        "resources", element(tag="resource", default_factory=list)
-    )
     frameworks: List[Framework] = wrapped(
         "frameworks", element(tag="framework", default_factory=list)
     )
     icon: Icon
+    libraries: List[Library] = wrapped(
+        "libraries", element(tag="library", default_factory=list)
+    )
+    locales: List[Locale] = wrapped(
+        "locales", element(tag="locale", default_factory=list)
+    )
+    resources: List[Resource] = wrapped(
+        "resources", element(tag="resource", default_factory=list)
+    )
 
     def _check(self):
         if not self.executables.count:
@@ -57,11 +61,14 @@ class Bundle(BaseXmlModel, tag="bundle"):
         for executable in self.executables:
             executable.install(bundle_dir, source_dir)
 
+        for framework in self.frameworks:
+            framework.install(bundle_dir, source_dir)
+
         for library in self.libraries:
             library.install(bundle_dir, source_dir)
 
+        for locale in self.locales:
+            locale.install(bundle_dir, source_dir)
+
         for resource in self.resources:
             resource.install(bundle_dir, source_dir)
-
-        for framework in self.frameworks:
-            framework.install(bundle_dir, source_dir)

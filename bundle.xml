@@ -3,6 +3,10 @@
   <executables>
     <executable name="Meld">meldlauncher</executable>
   </executables>
+  <frameworks>
+    <framework>tmp/Python.framework</framework>
+  </frameworks>
+  <icon>meld.icns</icon>
   <libraries>
     <library>libgtk-3.0.dylib</library>
     <library>libgirepository-1.0.1.dylib</library>
@@ -12,6 +16,11 @@
     <library>gtk-3.0/3.0.0/immodules/*.so</library>
     <library>gtk-3.0/3.0.0/printbackends/*.so</library>
   </libraries>
+  <locales>
+    <locale>gtk30.mo</locale>
+    <locale>gtksourceview-4.mo</locale>
+    <locale>meld.mo</locale>
+  </locales>
   <resources>
     <resource target_dir="Frameworks">lib/gtk-3.0/3.0.0/immodules.cache</resource>
     <resource target_dir="Frameworks">lib/gdk-pixbuf-2.0/2.10.0/loaders.cache</resource>
@@ -21,21 +30,4 @@
     <resource>share/meld</resource>
     <resource>share/themes</resource>
   </resources>
-  <frameworks>
-    <framework>tmp/Python.framework</framework>
-  </frameworks>
-  <icon>
-  </icon>
-  <locales>
-    <!-- should go in Resources/locale, be able to access mo files and also add them to plist -->
-  </locales>
-  <gtk3>
-    <!-- special module to take care of gtk specifis: pixbuf loader, input modules, regenerating typelib from gir, theme/icon ... -->
-    <css>
-      <!-- making changes to css file -->
-    </css>
-  </gtk3>
-  <gtk4>
-  </gtk4>
-  <fontconfig/>  <!-- for setting up etc and configs and stuff -->
 </bundle>
