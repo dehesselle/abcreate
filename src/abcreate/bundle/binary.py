@@ -5,6 +5,9 @@ from shutil import copy
 
 from pydantic_xml import BaseXmlModel, attr
 
+from .linkedobject import LinkedObject
+from .library import Library
+
 log = logging.getLogger("binary")
 
 
@@ -28,7 +31,21 @@ class Binary(BaseXmlModel):
             source_path := source_dir / "bin" / self.source_path
         ).exists():
             target_path = target_dir / self.target_name
-            log.info(f"copy {source_path} to {target_path}")
-            copy(source_path, target_path)
+            if target_path.exists():
+                log.error(f"will not overwrite {target_path}")
+            else:
+                log.info(f"copy {source_path} to {target_path}")
+                copy(source_path, target_path)
+
+            lo = LinkedObject(source_path)
+
+            for path in lo.flattened_dependency_tree(exclude_system=True):
+                library = Library(source_path=path.as_posix())
+                if library.is_framework:
+                    # frameworks can only be processed with info from bundle.xml
+                    log.info(f"skipping framework library {library.source_path}")
+                    pass
+                else:
+                    library.install(bundle_dir, source_dir)
         else:
             log.error(f"cannot locate {self.source_path}")

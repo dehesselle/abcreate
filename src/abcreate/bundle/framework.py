@@ -1,22 +1,18 @@
 import logging
 from pathlib import Path
-from shutil import copy
+from shutil import copytree
 
 from pydantic_xml import BaseXmlModel
 
-log = logging.getLogger("library")
+log = logging.getLogger("framewk")
 
 
-class Library(BaseXmlModel):
+class Framework(BaseXmlModel):
     source_path: str
 
     @property
     def target_name(self) -> str:
         return Path(self.source_path).name
-
-    @property
-    def is_framework(self) -> bool:
-        return ".framework/" in self.source_path
 
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Frameworks"
@@ -25,13 +21,22 @@ class Library(BaseXmlModel):
             target_dir.mkdir(parents=True)
 
         if (source_path := source_dir / self.source_path).exists() or (
-            source_path := source_dir / "lib" / self.source_path
+            source_path := source_dir / "Frameworks" / self.source_path
         ).exists():
             target_path = target_dir / self.target_name
             if target_path.exists():
                 log.error(f"will not overwrite {target_path}")
             else:
                 log.info(f"copy {source_path} to {target_path}")
-                copy(source_path, target_path)
+                copytree(source_path, target_path)
         else:
             log.error(f"cannot locate {self.source_path}")
+
+    @classmethod
+    def from_library(cls, library: Path):
+        while not library.name.endswith(".framework"):
+            library = library.parent
+            if library.name == "/":
+                return None
+
+        return Framework(source_path=library.name)
