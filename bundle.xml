@@ -8,8 +8,10 @@
     <executable name="Meld">meldlauncher</executable>
   </executables>
   <libraries>
-    <library>lib/libxml2.dylib</library>
+    <library>libgtk-3.0.dylib</library>
+    <library>libxml2.dylib</library>
     <library>liblzma.5.dylib</library>
+    <library>gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-gif.so</library>
   </libraries>
   <resources>
     <!-- generic stuff below Resources -->

@@ -37,15 +37,14 @@ class Executable(BaseXmlModel):
                 log.info(f"copy {source_path} to {target_path}")
                 copy(source_path, target_path)
 
-            lo = LinkedObject(source_path)
-
-            for path in lo.flattened_dependency_tree(exclude_system=True):
-                library = Library(source_path=path.as_posix())
-                if library.is_framework:
-                    # frameworks can only be processed with info from bundle.xml
-                    log.info(f"skipping framework library {library.source_path}")
-                    pass
-                else:
-                    library.install(bundle_dir, source_dir)
+                lo = LinkedObject(source_path)
+                for path in lo.flattened_dependency_tree(exclude_system=True):
+                    library = Library(source_path=path.as_posix())
+                    if library.is_framework:
+                        # frameworks can only be processed with info from bundle.xml
+                        log.info(f"skipping framework library {library.source_path}")
+                        pass
+                    else:
+                        library.install(bundle_dir, source_dir)
         else:
             log.error(f"cannot locate {self.source_path}")

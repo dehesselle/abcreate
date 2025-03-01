@@ -4,6 +4,8 @@ from shutil import copy
 
 from pydantic_xml import BaseXmlModel
 
+from .linkedobject import LinkedObject
+
 log = logging.getLogger("library")
 
 
@@ -13,6 +15,14 @@ class Library(BaseXmlModel):
     @property
     def target_name(self) -> str:
         return Path(self.source_path).name
+
+    def source_path_relative_to(self, part: str) -> str:
+        try:
+            path = Path(self.source_path)
+            index = path.parts.index(part)
+            return "".join(path.parts[index:])
+        except ValueError:
+            return self.source_path
 
     @property
     def is_framework(self) -> bool:
@@ -24,14 +34,26 @@ class Library(BaseXmlModel):
             log.info(f"creating {target_dir}")
             target_dir.mkdir(parents=True)
 
-        if (source_path := source_dir / self.source_path).exists() or (
-            source_path := source_dir / "lib" / self.source_path
-        ).exists():
-            target_path = target_dir / self.target_name
+        if (source_path := source_dir / "lib" / self.source_path).exists():
+            target_path = target_dir / self.source_path_relative_to("lib")
             if target_path.exists():
-                log.error(f"will not overwrite {target_path}")
+                log.debug(f"will not overwrite {target_path}")
             else:
+                if not target_path.parent.exists():
+                    # for subdirectories in the libraries directory
+                    target_path.parent.mkdir(parents=True)
+
                 log.info(f"copy {source_path} to {target_path}")
                 copy(source_path, target_path)
+
+                lo = LinkedObject(source_path)
+                for path in lo.flattened_dependency_tree(exclude_system=True):
+                    library = Library(source_path=path.as_posix())
+                    if library.is_framework:
+                        # frameworks can only be processed with info from bundle.xml
+                        log.info(f"skipping framework library {library.source_path}")
+                        pass
+                    else:
+                        library.install(bundle_dir, source_dir)
         else:
             log.error(f"cannot locate {self.source_path}")
