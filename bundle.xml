@@ -1,22 +1,21 @@
 <?xml version="1.0"?>
 <bundle>
-  <!-- each section should correspond to a Python module -->
   <executables>
-    <!-- umdrehen: text ist der source_path wie bei den anderne auch
-       tagert wird ja immer MacOS sein
-       -->
     <executable name="Meld">meldlauncher</executable>
   </executables>
   <libraries>
     <library>libgtk-3.0.dylib</library>
-    <library>libxml2.dylib</library>
-    <library>liblzma.5.dylib</library>
+    <library>libgirepository-1.0.1.dylib</library>
+    <library>libgtksourceview-4.0.dylib</library>
+    <library>libreadline.8.dylib</library>
     <library>gdk-pixbuf-2.0/2.10.0/loaders/*.so</library>
+    <library>gtk-3.0/3.0.0/immodules/*.so</library>
+    <library>gtk-3.0/3.0.0/printbackends/*.so</library>
   </libraries>
   <resources>
-    <!-- generic stuff below Resources -->
+    <resource target_dir="Frameworks">lib/gtk-3.0/3.0.0/immodules.cache</resource>
+    <resource target_dir="Frameworks">lib/gdk-pixbuf-2.0/2.10.0/loaders.cache</resource>
     <resource>share/glib-2.0</resource>
-    <resource dir="foo">share/rnote</resource>
   </resources>
   <icon>
   </icon>

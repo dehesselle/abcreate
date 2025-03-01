@@ -55,3 +55,6 @@ class Bundle(BaseXmlModel, tag="bundle"):
 
         for library in self.libraries:
             library.install(bundle_dir, source_dir)
+
+        for resource in self.resources:
+            resource.install(bundle_dir, source_dir)
