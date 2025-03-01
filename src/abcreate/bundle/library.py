@@ -29,7 +29,7 @@ class Library(BaseXmlModel):
         return ".framework/" in self.source_path
 
     def install(self, bundle_dir: Path, source_dir: Path):
-        target_dir = bundle_dir / "Frameworks"
+        target_dir = bundle_dir / "Contents" / "Frameworks"
         if not target_dir.exists():
             log.info(f"creating {target_dir}")
             target_dir.mkdir(parents=True)
