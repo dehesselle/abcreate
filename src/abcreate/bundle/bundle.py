@@ -1,13 +1,14 @@
 import logging
 from typing import List
 from pathlib import Path
-from shutil import rmtree, copy
+from shutil import rmtree
 
 from pydantic_xml import BaseXmlModel, element, wrapped
 
 from .executable import Executable
 from .library import Library
 from .resource import Resource
+from .framework import Framework
 from .icon import Icon
 from .plist import Plist
 from abcreate.configuration import configuration as config
@@ -24,6 +25,9 @@ class Bundle(BaseXmlModel, tag="bundle"):
     )
     resources: List[Resource] = wrapped(
         "resources", element(tag="resource", default_factory=list)
+    )
+    frameworks: List[Framework] = wrapped(
+        "frameworks", element(tag="framework", default_factory=list)
     )
     icon: Icon
 
@@ -58,3 +62,6 @@ class Bundle(BaseXmlModel, tag="bundle"):
 
         for resource in self.resources:
             resource.install(bundle_dir, source_dir)
+
+        for framework in self.frameworks:
+            framework.install(bundle_dir, source_dir)

@@ -17,6 +17,9 @@
     <resource target_dir="Frameworks">lib/gdk-pixbuf-2.0/2.10.0/loaders.cache</resource>
     <resource>share/glib-2.0</resource>
   </resources>
+  <frameworks>
+    <framework>tmp/Python.framework</framework>
+  </frameworks>
   <icon>
   </icon>
   <locales>
@@ -30,7 +33,5 @@
   </gtk3>
   <gtk4>
   </gtk4>
-  <frameworks>
-  </frameworks>
   <fontconfig/>  <!-- for setting up etc and configs and stuff -->
 </bundle>
