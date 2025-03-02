@@ -31,7 +31,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     def create(self, target_dir: str, source_dir: str):
         bundle_dir = target_dir / Path(
             self.executables.main_executable.target_name
-        ).with_suffix(".app.tmp")
+        ).with_suffix(".app")
 
         if bundle_dir.exists():
             log.info(f"removing {bundle_dir.as_posix()}")
