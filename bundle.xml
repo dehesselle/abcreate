@@ -25,6 +25,8 @@
   <resources>
     <resource target_dir="Frameworks">lib/gtk-3.0/3.0.0/immodules.cache</resource>
     <resource target_dir="Frameworks">lib/gdk-pixbuf-2.0/2.10.0/loaders.cache</resource>
+    <resource>lib/python3.10/site-packages/meld</resource>
+    <resource target_dir="Resources/python3.10/site-packages/meld" chmod="0o644">bin/meld</resource>
     <resource>share/glib-2.0</resource>
     <resource>share/gtksourceview-4</resource>
     <resource>share/icons</resource>

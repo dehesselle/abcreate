@@ -10,6 +10,7 @@ log = logging.getLogger("resource")
 
 class Resource(BaseXmlModel):
     target_dir: Optional[str] = attr(default="Resources")
+    chmod: Optional[str] = attr(default=None)
     source_path: str
 
     @classmethod
@@ -60,5 +61,7 @@ class Resource(BaseXmlModel):
                         copytree(source_path, target_path)
                     else:
                         copy(source_path, target_path)
+                        if self.chmod:
+                            target_path.chmod(int(self.chmod, 8))
             else:
                 log.error(f"cannot locate {self.source_path}")
