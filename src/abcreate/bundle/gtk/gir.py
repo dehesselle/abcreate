@@ -15,7 +15,7 @@ class Gir(BaseXmlModel):
     dummy: str  # FIXME: this is a workaround
 
     def install(self, bundle_dir: Path, source_dir: Path):
-        target_dir = bundle_dir / "Contents" / "Resources" / "girepository-1.0"
+        target_dir = bundle_dir / "Contents" / "Resources" / "lib" / "girepository-1.0"
         target_dir.mkdir(parents=True, exist_ok=True)
 
         library = Library(source_path="libgirepository-1.0.1.dylib")

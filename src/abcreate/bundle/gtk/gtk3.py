@@ -50,3 +50,5 @@ class Gtk3(BaseXmlModel):
                     )
                 else:
                     file.write(line)
+
+        (target_dir / "lib").symlink_to(".")  # GTK_EXE_PREFIX expects "lib"

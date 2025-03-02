@@ -17,7 +17,7 @@ class Resource(BaseXmlModel):
     def path_relative_to(cls, path: Path, part: str) -> str:
         try:
             index = path.parts.index(part)
-            return "/".join(path.parts[index + 1 :])
+            return "/".join(path.parts[index:])
         except ValueError:
             return path
 
