@@ -7,7 +7,7 @@ from pydantic_xml import BaseXmlModel, element, wrapped
 
 from .executable import Executable
 from .framework import Framework
-from .gtk import Gir
+from .gtk import GdkPixbuf, Gir
 from .icon import Icon
 from .library import Library
 from .locale import Locale
@@ -25,6 +25,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     frameworks: List[Framework] = wrapped(
         "frameworks", element(tag="framework", default_factory=list)
     )
+    gdkpixbuf: GdkPixbuf
     gir: Gir
     icon: Icon
     libraries: List[Library] = wrapped(
@@ -65,6 +66,8 @@ class Bundle(BaseXmlModel, tag="bundle"):
 
         for framework in self.frameworks:
             framework.install(bundle_dir, source_dir)
+
+        self.gdkpixbuf.install(bundle_dir, source_dir)
 
         self.gir.install(bundle_dir, source_dir)
 
