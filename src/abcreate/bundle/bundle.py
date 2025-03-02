@@ -42,11 +42,12 @@ class Bundle(BaseXmlModel, tag="bundle"):
 
         source_dir = Path(source_dir)
 
-        self.executables.install(bundle_dir, source_dir)
-        self.frameworks.install(bundle_dir, source_dir)
+        # order is on purpose: libraries, executables, resources
+        self.gtk3.install(bundle_dir, source_dir)
         self.gdkpixbuf.install(bundle_dir, source_dir)
         self.gir.install(bundle_dir, source_dir)
-        self.gtk3.install(bundle_dir, source_dir)
         self.libraries.install(bundle_dir, source_dir)
+        self.frameworks.install(bundle_dir, source_dir)
+        self.executables.install(bundle_dir, source_dir)
         self.locales.install(bundle_dir, source_dir)
         self.resources.install(bundle_dir, source_dir)

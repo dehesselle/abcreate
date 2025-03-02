@@ -38,6 +38,7 @@ class Executable(BaseXmlModel):
                 copy(source_path, target_path)
 
                 lo = LinkedObject(source_path)
+                # pull in dependencies
                 for path in lo.flattened_dependency_tree(exclude_system=True):
                     library = Library(source_path=path.as_posix())
                     if library.is_framework:
@@ -46,5 +47,11 @@ class Executable(BaseXmlModel):
                         pass
                     else:
                         library.install(bundle_dir, source_dir)
+                # adjust install names
+                lo.change_dependent_install_names(
+                    "@executable_path/../Frameworks",
+                    (bundle_dir / "Frameworks").as_posix(),
+                )
+
         else:
             log.error(f"cannot locate {self.source_path}")
