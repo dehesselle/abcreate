@@ -5,7 +5,7 @@ from shutil import rmtree
 
 from pydantic_xml import BaseXmlModel, element, wrapped
 
-from .executable import Executable
+from .executables import Executables
 from .framework import Framework
 from .gtk import GdkPixbuf, Gir, Gtk3
 from .icon import Icon
@@ -19,9 +19,7 @@ log = logging.getLogger("bundle")
 
 
 class Bundle(BaseXmlModel, tag="bundle"):
-    executables: List[Executable] = wrapped(
-        "executables", element(tag="executable", default_factory=list)
-    )
+    executables: Executables
     frameworks: List[Framework] = wrapped(
         "frameworks", element(tag="framework", default_factory=list)
     )
@@ -39,16 +37,10 @@ class Bundle(BaseXmlModel, tag="bundle"):
         "resources", element(tag="resource", default_factory=list)
     )
 
-    def _check(self):
-        if not self.executables.count:
-            log.critical("no main executable")
-
     def create(self, target_dir: str, source_dir: str):
-        self._check()
-        main_executable = self.executables[0]
-        bundle_dir = target_dir / Path(main_executable.target_name).with_suffix(
-            ".app.tmp"
-        )
+        bundle_dir = target_dir / Path(
+            self.executables.main_executable.target_name
+        ).with_suffix(".app.tmp")
 
         if bundle_dir.exists():
             log.info(f"removing {bundle_dir.as_posix()}")
@@ -57,13 +49,9 @@ class Bundle(BaseXmlModel, tag="bundle"):
         log.info(f"creating {bundle_dir.as_posix()}")
         bundle_dir.mkdir(parents=True)
 
-        Plist(bundle_dir).install()
-        Plist(bundle_dir).CFBundleExecutable = main_executable.target_name
-
         source_dir = Path(source_dir)
 
-        for executable in self.executables:
-            executable.install(bundle_dir, source_dir)
+        self.executables.install(bundle_dir, source_dir)
 
         for framework in self.frameworks:
             framework.install(bundle_dir, source_dir)

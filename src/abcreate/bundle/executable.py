@@ -8,7 +8,7 @@ from pydantic_xml import BaseXmlModel, attr
 from .linkedobject import LinkedObject
 from .library import Library
 
-log = logging.getLogger("exe")
+log = logging.getLogger("executable")
 
 
 class Executable(BaseXmlModel):
