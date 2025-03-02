@@ -6,6 +6,7 @@
   <frameworks>
     <framework>tmp/Python.framework</framework>
   </frameworks>
+  <gir>dummy</gir>
   <icon>meld.icns</icon>
   <libraries>
     <library>libgtk-3.0.dylib</library>

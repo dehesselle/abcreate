@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "lxml>=5.3.1",
     "pydantic-xml>=2.14.1",
 ]
 
