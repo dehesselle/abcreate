@@ -3,6 +3,7 @@ from pathlib import Path
 from shutil import copy
 
 from pydantic_xml import BaseXmlModel
+from pydantic import field_validator
 
 from .linkedobject import LinkedObject
 
@@ -11,6 +12,13 @@ log = logging.getLogger("library")
 
 class Library(BaseXmlModel):
     source_path: str
+
+    @field_validator("source_path")
+    def ensure_relative_path(cls, value: str) -> str:
+        path = Path(value)
+        if path.is_absolute():
+            return cls.path_relative_to(path, "lib")
+        return value
 
     @property
     def target_name(self) -> str:
