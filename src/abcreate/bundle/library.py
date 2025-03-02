@@ -17,7 +17,7 @@ class Library(BaseXmlModel):
     def ensure_relative_path(cls, value: str) -> str:
         path = Path(value)
         if path.is_absolute():
-            return cls.path_relative_to(path, "lib")
+            return cls.path_relative_to(path, "lib").as_posix()
         return value
 
     @property
@@ -25,10 +25,10 @@ class Library(BaseXmlModel):
         return Path(self.source_path).name
 
     @classmethod
-    def path_relative_to(cls, path: Path, part: str) -> str:
+    def path_relative_to(cls, path: Path, part: str) -> Path:
         try:
             index = path.parts.index(part)
-            return "/".join(path.parts[index + 1 :])
+            return Path(*list((path.parts[index + 1 :])))
         except ValueError:
             return path
 
@@ -71,8 +71,14 @@ class Library(BaseXmlModel):
 
                     # adjust install names
                     lo = LinkedObject(target_path)
+                    loader_path = Path("@loader_path")
+                    for _ in range(
+                        len(self.path_relative_to(source_path, "lib").parts) - 1
+                    ):
+                        # take care of nested directory structure
+                        loader_path /= ".."
                     lo.change_dependent_install_names(
-                        "@loader_path", target_dir.as_posix()
+                        loader_path.as_posix(), target_dir.as_posix()
                     )
             else:
                 log.error(f"cannot locate {self.source_path}")
