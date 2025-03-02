@@ -7,7 +7,7 @@ from pydantic_xml import BaseXmlModel, element, wrapped
 
 from .executable import Executable
 from .framework import Framework
-from .gtk import GdkPixbuf, Gir
+from .gtk import GdkPixbuf, Gir, Gtk3
 from .icon import Icon
 from .library import Library
 from .locale import Locale
@@ -27,6 +27,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     )
     gdkpixbuf: GdkPixbuf
     gir: Gir
+    gtk3: Gtk3
     icon: Icon
     libraries: List[Library] = wrapped(
         "libraries", element(tag="library", default_factory=list)
@@ -70,6 +71,8 @@ class Bundle(BaseXmlModel, tag="bundle"):
         self.gdkpixbuf.install(bundle_dir, source_dir)
 
         self.gir.install(bundle_dir, source_dir)
+
+        self.gtk3.install(bundle_dir, source_dir)
 
         for library in self.libraries:
             library.install(bundle_dir, source_dir)

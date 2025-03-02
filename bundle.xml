@@ -8,14 +8,12 @@
   </frameworks>
   <gdkpixbuf>dummy</gdkpixbuf>
   <gir>dummy</gir>
+  <gtk3>dummy</gtk3>
   <icon>meld.icns</icon>
   <libraries>
-    <library>libgtk-3.0.dylib</library>
     <library>libgirepository-1.0.1.dylib</library>
     <library>libgtksourceview-4.0.dylib</library>
     <library>libreadline.8.dylib</library>
-    <library>gtk-3.0/3.0.0/immodules/*.so</library>
-    <library>gtk-3.0/3.0.0/printbackends/*.so</library>
   </libraries>
   <locales>
     <locale>gtk30.mo</locale>
@@ -23,7 +21,6 @@
     <locale>meld.mo</locale>
   </locales>
   <resources>
-    <resource target_dir="Frameworks">lib/gtk-3.0/3.0.0/immodules.cache</resource>
     <resource>lib/python3.10/site-packages/meld</resource>
     <resource target_dir="Resources/python3.10/site-packages/meld" chmod="0o644">bin/meld</resource>
     <resource>share/glib-2.0</resource>
