@@ -1,9 +1,8 @@
 import logging
-from typing import List
 from pathlib import Path
 from shutil import rmtree
 
-from pydantic_xml import BaseXmlModel, element, wrapped
+from pydantic_xml import BaseXmlModel
 
 from .executables import Executables
 from .frameworks import Frameworks
@@ -12,7 +11,7 @@ from .icon import Icon
 from .libraries import Libraries
 from .locales import Locales
 from .plist import Plist
-from .resource import Resource
+from .resources import Resources
 from abcreate.configuration import configuration as config
 
 log = logging.getLogger("bundle")
@@ -27,9 +26,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     icon: Icon
     libraries: Libraries
     locales: Locales
-    resources: List[Resource] = wrapped(
-        "resources", element(tag="resource", default_factory=list)
-    )
+    resources: Resources
 
     def create(self, target_dir: str, source_dir: str):
         bundle_dir = target_dir / Path(
@@ -52,6 +49,4 @@ class Bundle(BaseXmlModel, tag="bundle"):
         self.gtk3.install(bundle_dir, source_dir)
         self.libraries.install(bundle_dir, source_dir)
         self.locales.install(bundle_dir, source_dir)
-
-        for resource in self.resources:
-            resource.install(bundle_dir, source_dir)
+        self.resources.install(bundle_dir, source_dir)
