@@ -9,7 +9,7 @@ log = logging.getLogger("resource")
 
 
 class Resource(BaseXmlModel):
-    target_dir: Optional[str] = attr(default="Resources")
+    target_path: Optional[str] = attr(default=None)
     chmod: Optional[str] = attr(default=None)
     source_path: str
 
@@ -22,33 +22,32 @@ class Resource(BaseXmlModel):
             return path
 
     def install(self, bundle_dir: Path, source_dir: Path):
-        target_dir = bundle_dir / "Contents" / self.target_dir
-
-        if not target_dir.exists():
-            log.info(f"creating {target_dir}")
-            target_dir.mkdir(parents=True)
+        target_dir = bundle_dir / "Contents" / "Resources"
 
         for source_path in (source_dir / Path(self.source_path).parent).glob(
             Path(self.source_path).name
         ):
             if source_path.exists():
-                # source_path
-                #     a fully expanded path from self.source_path
-                # self.source_path
-                #     a path relative to source_dir, can contain globs
-                #
-                # Example:                   +----------------------------------+
-                #                            |                                  |
-                #                            v                                  |
-                #   self.source_path   =   share/glib-2.0/*.txt                 |
-                #   source_path        =   /some/path/share/glib-2.0/foo.txt    |
-                #                                       ^                       |
-                #                                       |                       |
-                #                                       +-----------------------+
-                #                           This is where we cut off source_path.
-                target_path = target_dir / self.path_relative_to(
-                    source_path, Path(self.source_path).parts[0]
-                )
+                if self.target_path:
+                    target_path = target_dir / self.target_path
+                else:
+                    # source_path
+                    #     a fully expanded path from self.source_path
+                    # self.source_path
+                    #     a path relative to source_dir, can contain globs
+                    #
+                    # Example:                   +----------------------------------+
+                    #                            |                                  |
+                    #                            v                                  |
+                    #   self.source_path   =   share/glib-2.0/*.txt                 |
+                    #   source_path        =   /some/path/share/glib-2.0/foo.txt    |
+                    #                                       ^                       |
+                    #                                       |                       |
+                    #                                       +-----------------------+
+                    #                           This is where we cut off source_path.
+                    target_path = target_dir / self.path_relative_to(
+                        source_path, Path(self.source_path).parts[0]
+                    )
                 if target_path.exists():
                     log.debug(f"will not overwrite {target_path}")
                 else:
