@@ -10,9 +10,7 @@ from .gtk import GdkPixbuf, Gir, Gtk3
 from .icon import Icon
 from .libraries import Libraries
 from .locales import Locales
-from .plist import Plist
 from .resources import Resources
-from abcreate.configuration import configuration as config
 
 log = logging.getLogger("bundle")
 

@@ -6,7 +6,6 @@ from enum import Enum
 import os
 
 from abcreate.bundle import Bundle
-from abcreate.configuration import configuration as config
 
 try:
     from abcreate._version import version
