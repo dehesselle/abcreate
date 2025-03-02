@@ -7,7 +7,7 @@ from pydantic_xml import BaseXmlModel, element, wrapped
 
 from .executable import Executable
 from .framework import Framework
-from .gir import Gir
+from .gtk import Gir
 from .icon import Icon
 from .library import Library
 from .locale import Locale
