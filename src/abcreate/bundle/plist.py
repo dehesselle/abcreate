@@ -23,12 +23,13 @@ class Plist:
         return self.bundle_dir / "Contents" / self.PLIST_NAME
 
     def install(self):
-        if not self.target_path.parent.exists():
-            self.target_path.parent.mkdir()
-
-        with importlib.resources.path("abcreate.bundle", self.PLIST_NAME) as source:
-            log.debug(f"creating {self.target_path.as_posix()}")
-            copy(source, self.target_path)
+        if self.target_path.exists():
+            log.debug(f"already installed {self.target_path}")
+        else:
+            self.target_path.parent.mkdir(parents=True, exist_ok=True)
+            with importlib.resources.path("abcreate.bundle", self.PLIST_NAME) as source:
+                log.debug(f"creating {self.target_path.as_posix()}")
+                copy(source, self.target_path)
 
     @property
     def is_installed(self) -> bool:
