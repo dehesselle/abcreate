@@ -37,20 +37,29 @@ class Gir(BaseXmlModel):
                 )[0]
                 libraries = element.attrib["shared-library"].split(",")
                 element.attrib["shared-library"] = ""
+
+                for library in libraries:
+                    if len(element.attrib["shared-library"]):
+                        element.attrib["shared-library"] += ","
+                    element.attrib["shared-library"] += (
+                        Path("@executable_path/../Frameworks") / Path(library).name
+                    ).as_posix()
+
+                with TemporaryDirectory() as temp_dir:
+                    gir_file = Path(temp_dir) / source_path.name
+                    tree.write(gir_file, pretty_print=True)
+                    subprocess.run(
+                        [
+                            f"{source_dir}/usr/bin/jhb",
+                            "run",
+                            "g-ir-compiler",
+                            "-o",
+                            target_path,
+                            gir_file,
+                        ]
+                    )
             except KeyError:
-                log.info(f"skipping {target_path}")
-                continue
-
-            for library in libraries:
-                if len(element.attrib["shared-library"]):
-                    element.attrib["shared-library"] += ","
-                element.attrib["shared-library"] += (
-                    Path("@executable_path/../Frameworks") / Path(library).name
-                ).as_posix()
-
-            with TemporaryDirectory() as temp_dir:
-                gir_file = Path(temp_dir) / source_path.name
-                tree.write(gir_file, pretty_print=True)
+                log.debug(f"no shared-library in {target_path}")
                 subprocess.run(
                     [
                         f"{source_dir}/usr/bin/jhb",
@@ -58,6 +67,6 @@ class Gir(BaseXmlModel):
                         "g-ir-compiler",
                         "-o",
                         target_path,
-                        gir_file,
+                        source_path,
                     ]
                 )
