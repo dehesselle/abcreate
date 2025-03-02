@@ -9,7 +9,7 @@ from .executables import Executables
 from .framework import Framework
 from .gtk import GdkPixbuf, Gir, Gtk3
 from .icon import Icon
-from .library import Library
+from .libraries import Libraries
 from .locale import Locale
 from .plist import Plist
 from .resource import Resource
@@ -27,9 +27,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     gir: Gir
     gtk3: Gtk3
     icon: Icon
-    libraries: List[Library] = wrapped(
-        "libraries", element(tag="library", default_factory=list)
-    )
+    libraries: Libraries
     locales: List[Locale] = wrapped(
         "locales", element(tag="locale", default_factory=list)
     )
@@ -62,8 +60,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
 
         self.gtk3.install(bundle_dir, source_dir)
 
-        for library in self.libraries:
-            library.install(bundle_dir, source_dir)
+        self.libraries.install(bundle_dir, source_dir)
 
         for locale in self.locales:
             locale.install(bundle_dir, source_dir)
