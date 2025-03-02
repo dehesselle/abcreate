@@ -6,6 +6,8 @@ from tempfile import TemporaryDirectory
 
 from pydantic_xml import BaseXmlModel
 
+from abcreate.bundle.library import Library
+
 log = logging.getLogger("gir")
 
 
@@ -15,6 +17,9 @@ class Gir(BaseXmlModel):
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents" / "Resources" / "girepository-1.0"
         target_dir.mkdir(parents=True, exist_ok=True)
+
+        library = Library(source_path="libgirepository-1.0.1.dylib")
+        library.install(bundle_dir, source_dir)
 
         for source_path in Path(source_dir / "share" / "gir-1.0").glob("*.gir"):
             target_path = target_dir / source_path.with_suffix(".typelib").name
