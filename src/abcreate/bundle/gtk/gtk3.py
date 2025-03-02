@@ -23,7 +23,7 @@ class Gtk3(BaseXmlModel):
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents" / "Frameworks"
 
-        library = Library(source_path="lib/libgtk-3.0.dylib")
+        library = Library(source_path="libgtk-3.0.dylib")
         library.install(bundle_dir, source_dir)
 
         for source_path in Path(
