@@ -10,7 +10,7 @@ from .frameworks import Frameworks
 from .gtk import GdkPixbuf, Gir, Gtk3
 from .icon import Icon
 from .libraries import Libraries
-from .locale import Locale
+from .locales import Locales
 from .plist import Plist
 from .resource import Resource
 from abcreate.configuration import configuration as config
@@ -26,9 +26,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     gtk3: Gtk3
     icon: Icon
     libraries: Libraries
-    locales: List[Locale] = wrapped(
-        "locales", element(tag="locale", default_factory=list)
-    )
+    locales: Locales
     resources: List[Resource] = wrapped(
         "resources", element(tag="resource", default_factory=list)
     )
@@ -53,9 +51,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
         self.gir.install(bundle_dir, source_dir)
         self.gtk3.install(bundle_dir, source_dir)
         self.libraries.install(bundle_dir, source_dir)
-
-        for locale in self.locales:
-            locale.install(bundle_dir, source_dir)
+        self.locales.install(bundle_dir, source_dir)
 
         for resource in self.resources:
             resource.install(bundle_dir, source_dir)

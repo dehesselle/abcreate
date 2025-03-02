@@ -14,6 +14,7 @@ class Plist:
     class Key(Enum):
         CFBUNDLEEXECUTABLE = "CFBundleExecutable"
         CFBUNDLEICONFILE = "CFBundleIconFile"
+        CFBUNDLELOCALIZATIONS = "CFBundleLocalizations"
 
     def __init__(self, bundle_dir: Path):
         self.bundle_dir = bundle_dir
@@ -70,3 +71,11 @@ class Plist:
     @CFBundleIconFile.setter
     def CFBundleIconFile(self, value):
         self._write(self.Key.CFBUNDLEICONFILE.value, value)
+
+    @property
+    def CFBundleLocalizations(self):
+        return self._read(self.Key.CFBUNDLELOCALIZATIONS.value)
+
+    @CFBundleLocalizations.setter
+    def CFBundleLocalizations(self, value):
+        self._write(self.Key.CFBUNDLELOCALIZATIONS.value, value)

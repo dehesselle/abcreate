@@ -15,9 +15,9 @@
     <library>libreadline.8.dylib</library>
   </libraries>
   <locales>
+    <locale>meld.mo</locale>
     <locale>gtk30.mo</locale>
     <locale>gtksourceview-4.mo</locale>
-    <locale>meld.mo</locale>
   </locales>
   <resources>
     <resource>lib/python3.10/site-packages/meld</resource>
