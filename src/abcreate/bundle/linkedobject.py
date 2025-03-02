@@ -10,7 +10,7 @@ import shlex
 import re
 import logging
 
-log = logging.getLogger("lobj")
+log = logging.getLogger("linkedobj")
 
 
 class RelativeLinkPath(Enum):
@@ -66,7 +66,7 @@ class LinkedObject:
         self._install_name_tool(f"-add_rpath {rpath}")
 
     def change_one_dependant_install_name(self, install_name: str):
-        if libs := [l for l in self.depends_on if Path(install_name).name in l]:
+        if libs := [l for l in self.depends_on() if Path(install_name).name in l]:
             self._install_name_tool(f"-change {libs[0]} {install_name}")
 
     def change_dependent_install_names(self, install_name: str, lib_dir: str):
@@ -74,7 +74,7 @@ class LinkedObject:
             l for l in Path(lib_dir).glob("*.dylib") if not l.is_symlink()
         ]
 
-        for lib in self.depends_on:
+        for lib in self.depends_on():
             if Path(lib).name in [Path(l).name for l in libs_in_lib_dir]:
                 self._install_name_tool(
                     f"-change {lib} {Path(install_name)/Path(lib).name}"
