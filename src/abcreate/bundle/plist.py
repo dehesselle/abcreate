@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 René de Hesselle <dehesselle@web.de>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 from pathlib import Path
 import logging
 import importlib.resources
