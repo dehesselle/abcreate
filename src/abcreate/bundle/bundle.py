@@ -49,5 +49,6 @@ class Bundle(BaseXmlModel, tag="bundle"):
         self.libraries.install(bundle_dir, source_dir)
         self.frameworks.install(bundle_dir, source_dir)
         self.executables.install(bundle_dir, source_dir)
+        self.icon.install(bundle_dir, source_dir)
         self.locales.install(bundle_dir, source_dir)
         self.resources.install(bundle_dir, source_dir)

@@ -9,7 +9,7 @@
   <gdkpixbuf>dummy</gdkpixbuf>
   <gir>dummy</gir>
   <gtk3>dummy</gtk3>
-  <icon>meld.icns</icon>
+  <icon>tmp/meld.icns</icon>
   <libraries>
     <library>libgtksourceview-4.0.dylib</library>
     <library>libreadline.8.dylib</library>
