@@ -57,6 +57,7 @@ def main() -> None:
     log.debug(f"abcreate {version}")
 
     parser = argparse.ArgumentParser(description="create an application bundle")
+    parser.add_argument("--version", action="version", version=f"abcreate {version}")
     p_commands = parser.add_subparsers(help="available commands", dest="command")
 
     p_create = p_commands.add_parser(
