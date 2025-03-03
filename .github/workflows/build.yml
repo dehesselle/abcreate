@@ -7,7 +7,7 @@ on:
   push:
 jobs:
 
-#-------------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
 
   Build:
     runs-on: ubuntu-latest
@@ -30,7 +30,35 @@ jobs:
           name: dist
           path: dist/abcreate*.*
 
-#-------------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+
+  Prerelease:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: Build
+    if: startsWith(github.ref, 'refs/heads/develop')
+    steps:
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+
+      - name: Update prerelease
+        uses: ncipollo/release-action@v1
+        with:
+          name: develop
+          artifacts: abcreate*.*
+          prerelease: true
+          allowUpdates: true
+          removeArtifacts: true
+          tag: latest
+          body: |
+            This prerelease follows the develop branch.
+            For testing purposes only.
+
+  #-----------------------------------------------------------------------------
 
   Release:
     runs-on: ubuntu-latest
