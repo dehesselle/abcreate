@@ -40,7 +40,7 @@ class Library(BaseXmlModel):
     def is_framework(self) -> bool:
         return ".framework/" in self.source_path
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, source_dir: Path, flatten: bool = False):
         target_dir = bundle_dir / "Contents" / "Frameworks"
         if not target_dir.exists():
             log.debug(f"creating {target_dir}")
@@ -50,7 +50,10 @@ class Library(BaseXmlModel):
             Path(self.source_path).name
         ):
             if source_path.exists():
-                target_path = target_dir / self.path_relative_to(source_path, "lib")
+                if flatten:
+                    target_path = target_dir / source_path.name
+                else:
+                    target_path = target_dir / self.path_relative_to(source_path, "lib")
                 if target_path.exists():
                     log.debug(f"will not overwrite {target_path}")
                 else:
@@ -76,11 +79,12 @@ class Library(BaseXmlModel):
                     # adjust install names
                     lo = LinkedObject(target_path)
                     loader_path = Path("@loader_path")
-                    for _ in range(
-                        len(self.path_relative_to(source_path, "lib").parts) - 1
-                    ):
+                    if not flatten:
                         # take care of nested directory structure
-                        loader_path /= ".."
+                        for _ in range(
+                            len(self.path_relative_to(source_path, "lib").parts) - 1
+                        ):
+                            loader_path /= ".."
                     lo.change_dependent_install_names(
                         loader_path.as_posix(), target_dir.as_posix()
                     )
