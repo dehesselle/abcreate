@@ -22,10 +22,12 @@
   <resources>
     <resource>lib/python3.10/site-packages/meld</resource>
     <resource target_path="lib/python3.10/site-packages/meld/meld" chmod="0o644">bin/meld</resource>
+    <resource>share/meld</resource>
+    <!---->
+    <resource>etc/fonts</resource>
     <resource>share/glib-2.0</resource>
     <resource>share/gtksourceview-4</resource>
     <resource>share/icons</resource>
-    <resource>share/meld</resource>
     <resource>share/themes</resource>
   </resources>
 </bundle>
