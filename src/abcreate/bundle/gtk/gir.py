@@ -5,10 +5,12 @@
 import logging
 from pathlib import Path
 from lxml import etree
+import shlex
 import subprocess
 from tempfile import TemporaryDirectory
+from typing import Optional
 
-from pydantic_xml import BaseXmlModel
+from pydantic_xml import BaseXmlModel, attr
 
 from abcreate.bundle.library import Library
 
@@ -16,7 +18,24 @@ log = logging.getLogger("gir")
 
 
 class Gir(BaseXmlModel):
+    command: Optional[str] = attr(default="g-ir-compiler")
     dummy: str  # FIXME: this is a workaround
+
+    def _compile(self, source_path: Path, target_path: Path):
+        log.info(f"compiling {target_path}")
+        try:
+            subprocess.run(
+                [
+                    *shlex.split(self.command),
+                    "-o",
+                    target_path,
+                    source_path,
+                ]
+            ).check_returncode()
+        except FileNotFoundError:
+            log.error(f"command not found: {self.command}")
+        except subprocess.CalledProcessError as e:
+            log.error(f"typelib compilation failed\n{e}")
 
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents" / "Resources" / "lib" / "girepository-1.0"
@@ -27,7 +46,6 @@ class Gir(BaseXmlModel):
 
         for source_path in Path(source_dir / "share" / "gir-1.0").glob("*.gir"):
             target_path = target_dir / source_path.with_suffix(".typelib").name
-            log.info(f"compiling {target_path}")
 
             tree = etree.parse(source_path)
             nsmap = {
@@ -52,25 +70,7 @@ class Gir(BaseXmlModel):
                 with TemporaryDirectory() as temp_dir:
                     gir_file = Path(temp_dir) / source_path.name
                     tree.write(gir_file, pretty_print=True)
-                    subprocess.run(
-                        [
-                            f"{source_dir}/usr/bin/jhb",
-                            "run",
-                            "g-ir-compiler",
-                            "-o",
-                            target_path,
-                            gir_file,
-                        ]
-                    )
+                    self._compile(gir_file, target_path)
             except KeyError:
                 log.debug(f"no shared-library in {target_path}")
-                subprocess.run(
-                    [
-                        f"{source_dir}/usr/bin/jhb",
-                        "run",
-                        "g-ir-compiler",
-                        "-o",
-                        target_path,
-                        source_path,
-                    ]
-                )
+                self._compile(source_path, target_path)
