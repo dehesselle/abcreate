@@ -2,6 +2,7 @@
 <bundle>
   <executables>
     <executable name="Meld">meldlauncher</executable>
+    <executable>gtk3-demo</executable>
   </executables>
   <frameworks>
     <framework>tmp/Python.framework</framework>
