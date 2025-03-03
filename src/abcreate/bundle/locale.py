@@ -30,6 +30,6 @@ class Locale(BaseXmlModel):
             if target_path.exists():
                 log.debug(f"will not overwrite {target_path}")
             else:
-                log.info(f"copy {source_path} to {target_path}")
+                log.debug(f"copy {source_path} to {target_path}")
                 target_path.parent.mkdir(parents=True, exist_ok=True)
                 copy(source_path, target_path)

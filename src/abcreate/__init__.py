@@ -43,18 +43,32 @@ class Command(Enum):
     CREATE = "create"
 
 
-def main() -> None:
+def setup_logging() -> None:
+    file_handler = logging.FileHandler("abcreate.log")
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(
+        logging.Formatter(
+            "%(asctime)-23s | %(name)-10s | %(levelname)-8s | %(message)s"
+        )
+    )
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    stream_handler.setFormatter(
+        logging.Formatter("%(asctime)-23s [%(name)-10s] %(levelname)s: %(message)s")
+    )
     logging.basicConfig(
         level=logging.DEBUG,
-        format="%(asctime)-23s|%(name)-10s|%(levelname)-8s|%(message)s",
         handlers=[
-            logging.FileHandler("abcreate.log"),
-            logging.StreamHandler(),
+            file_handler,
+            stream_handler,
             CollectStatisticsHandler(),
             ExitOnCriticalHandler(),
         ],
     )
-    log.debug(f"abcreate {version}")
+
+
+def main() -> None:
+    setup_logging()
 
     parser = argparse.ArgumentParser(description="create an application bundle")
     parser.add_argument("--version", action="version", version=f"abcreate {version}")
@@ -68,6 +82,8 @@ def main() -> None:
     p_create.add_argument("-t", "--target_dir", required=False, help="target directory")
 
     args = parser.parse_args()
+
+    log.info(f"abcreate {version}")
 
     if args.command == Command.CREATE.value:
         try:
@@ -84,7 +100,7 @@ def main() -> None:
         log.error("wrong invocation")
         parser.print_usage()
 
-    log.debug("end log")
+    log.info("finished")
 
     if CollectStatisticsHandler.has_errors():
         exit(1)

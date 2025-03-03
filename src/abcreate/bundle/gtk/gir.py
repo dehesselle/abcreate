@@ -22,7 +22,7 @@ class Gir(BaseXmlModel):
     dummy: str  # FIXME: this is a workaround
 
     def _compile(self, source_path: Path, target_path: Path):
-        log.info(f"compiling {target_path}")
+        log.debug(f"compiling {target_path}")
         try:
             subprocess.run(
                 [

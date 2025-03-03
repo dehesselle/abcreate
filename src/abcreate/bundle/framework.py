@@ -18,7 +18,7 @@ class Framework(BaseXmlModel):
         target_dir = bundle_dir / "Contents" / "Frameworks"
 
         if not target_dir.exists():
-            log.info(f"creating {target_dir}")
+            log.debug(f"creating {target_dir}")
             target_dir.mkdir(parents=True)
 
         if (source_path := source_dir / self.source_path).exists():
@@ -26,7 +26,7 @@ class Framework(BaseXmlModel):
             if target_path.exists():
                 log.error(f"will not overwrite {target_path}")
             else:
-                log.info(f"copy {source_path} to {target_path}")
+                log.debug(f"copy {source_path} to {target_path}")
                 copytree(source_path, target_path)
         else:
             log.error(f"cannot locate {self.source_path}")

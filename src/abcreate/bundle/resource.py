@@ -59,7 +59,7 @@ class Resource(BaseXmlModel):
                         # for subdirectories
                         target_path.parent.mkdir(parents=True)
 
-                    log.info(f"copy {source_path} to {target_path}")
+                    log.debug(f"copy {source_path} to {target_path}")
                     if source_path.is_dir():
                         copytree(source_path, target_path)
                     else:

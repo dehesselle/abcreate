@@ -36,7 +36,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
         ).with_suffix(".app")
 
         if bundle_dir.exists():
-            log.info(f"removing {bundle_dir.as_posix()}")
+            log.debug(f"removing {bundle_dir.as_posix()}")
             rmtree(bundle_dir)
 
         log.info(f"creating {bundle_dir.as_posix()}")

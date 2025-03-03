@@ -43,7 +43,7 @@ class Library(BaseXmlModel):
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents" / "Frameworks"
         if not target_dir.exists():
-            log.info(f"creating {target_dir}")
+            log.debug(f"creating {target_dir}")
             target_dir.mkdir(parents=True)
 
         for source_path in (source_dir / "lib" / Path(self.source_path).parent).glob(
@@ -58,7 +58,7 @@ class Library(BaseXmlModel):
                         # for subdirectories in the libraries directory
                         target_path.parent.mkdir(parents=True)
 
-                    log.info(f"copy {source_path} to {target_path}")
+                    log.debug(f"copy {source_path} to {target_path}")
                     copy(source_path, target_path)
 
                     # pull in dependencies
@@ -67,7 +67,7 @@ class Library(BaseXmlModel):
                         library = Library(source_path=path.as_posix())
                         if library.is_framework:
                             # frameworks can only be processed with info from bundle.xml
-                            log.info(
+                            log.debug(
                                 f"skipping framework library {library.source_path}"
                             )
                         else:
