@@ -7,8 +7,6 @@ import argparse
 from pathlib import Path
 from enum import Enum
 
-import os
-
 from abcreate.bundle import Bundle
 
 try:
@@ -79,7 +77,7 @@ def main() -> None:
     )
     p_create.add_argument("file")
     p_create.add_argument("-s", "--source_dir", required=True, help="source directory")
-    p_create.add_argument("-t", "--target_dir", required=False, help="target directory")
+    p_create.add_argument("-t", "--target_dir", required=True, help="target directory")
 
     args = parser.parse_args()
 
@@ -89,11 +87,7 @@ def main() -> None:
         try:
             xml_doc = Path(args.file).read_text()
             bundle = Bundle.from_xml(xml_doc)
-
-            if args.target_dir:
-                bundle.create(args.target_dir, args.source_dir)
-            else:
-                bundle.create(os.getcwd(), args.source_dir)
+            bundle.create(args.target_dir, args.source_dir)
         except Exception as e:
             log.critical(e.msg)
     else:
