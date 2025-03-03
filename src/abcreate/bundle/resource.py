@@ -61,7 +61,7 @@ class Resource(BaseXmlModel):
 
                     log.debug(f"copy {source_path} to {target_path}")
                     if source_path.is_dir():
-                        copytree(source_path, target_path)
+                        copytree(source_path, target_path, symlinks=True)
                     else:
                         copy(source_path, target_path)
                         if self.chmod:

@@ -27,6 +27,6 @@ class Framework(BaseXmlModel):
                 log.error(f"will not overwrite {target_path}")
             else:
                 log.debug(f"copy {source_path} to {target_path}")
-                copytree(source_path, target_path)
+                copytree(source_path, target_path, symlinks=True)
         else:
             log.error(f"cannot locate {self.source_path}")
