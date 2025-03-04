@@ -14,8 +14,6 @@ log = logging.getLogger("gdkpixbuf")
 
 
 class GdkPixbuf(BaseXmlModel):
-    dummy: str  # FIXME: this is a workaround
-
     @classmethod
     def path_relative_to(cls, path: Path, part: str) -> str:
         try:

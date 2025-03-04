@@ -7,9 +7,9 @@
   <frameworks>
     <framework>tmp/Python.framework</framework>
   </frameworks>
-  <gdkpixbuf>dummy</gdkpixbuf>
-  <gir command="/Users/Shared/work/jhb-0.55/usr/bin/jhb run g-ir-compiler">dummy</gir>
-  <gtk3>dummy</gtk3>
+  <gdkpixbuf/>
+  <gir command="/Users/Shared/work/jhb-0.55/usr/bin/jhb run g-ir-compiler"/>
+  <gtk3/>
   <icons>
     <icon>tmp/Meld.icns</icon>
   </icons>
