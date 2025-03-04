@@ -14,8 +14,6 @@ log = logging.getLogger("gtk")
 
 
 class Gtk3(BaseXmlModel):
-    dummy: str  # FIXME: this is a workaround
-
     @classmethod
     def path_relative_to(cls, path: Path, part: str) -> str:
         try:

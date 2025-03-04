@@ -19,7 +19,6 @@ log = logging.getLogger("gir")
 
 class Gir(BaseXmlModel):
     command: Optional[str] = attr(default="g-ir-compiler")
-    dummy: str  # FIXME: this is a workaround
 
     def _compile(self, source_path: Path, target_path: Path):
         log.debug(f"compiling {target_path}")
