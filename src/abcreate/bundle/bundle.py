@@ -14,6 +14,7 @@ from .gtk import GdkPixbuf, Gir, Gtk3
 from .icons import Icons
 from .libraries import Libraries
 from .locales import Locales
+from .plist import Plist
 from .resources import Resources
 
 log = logging.getLogger("bundle")
@@ -28,6 +29,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     icons: Icons
     libraries: Libraries
     locales: Locales
+    plist: Plist
     resources: Resources
 
     def create(self, target_dir: str, source_dir: str):
@@ -44,7 +46,12 @@ class Bundle(BaseXmlModel, tag="bundle"):
 
         source_dir = Path(source_dir)
 
-        # order is on purpose: libraries, executables, resources
+        # order is on purpose:
+        #   - plist first because others will modify it
+        #   - libraries
+        #   - executables
+        #   -  resources
+        self.plist.install(bundle_dir, source_dir)
         self.gtk3.install(bundle_dir, source_dir)
         self.gdkpixbuf.install(bundle_dir, source_dir)
         self.gir.install(bundle_dir, source_dir)

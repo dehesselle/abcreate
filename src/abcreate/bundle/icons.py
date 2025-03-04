@@ -29,6 +29,4 @@ class Icons(BaseXmlModel):
         for icon in self.icons:
             icon.install(bundle_dir, source_dir)
 
-        plist = Plist(bundle_dir)
-        plist.install()
-        plist.CFBundleIconFile = Path(self.main_icon.source_path).name
+        Plist(source_path=None).CFBundleIconFile = Path(self.main_icon.source_path).name
