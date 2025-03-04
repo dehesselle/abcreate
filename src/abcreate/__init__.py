@@ -89,7 +89,7 @@ def main() -> None:
             bundle = Bundle.from_xml(xml_doc)
             bundle.create(args.target_dir, args.source_dir)
         except Exception as e:
-            log.critical(e.msg)
+            log.critical(e)
     else:
         log.error("wrong invocation")
         parser.print_usage()
