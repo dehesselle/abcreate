@@ -31,9 +31,7 @@ class Executable(BaseXmlModel):
         if not target_dir.exists():
             target_dir.mkdir(parents=True)
 
-        if (source_path := source_dir / self.source_path).exists() or (
-            source_path := source_dir / "bin" / self.source_path
-        ).exists():
+        if (source_path := source_dir / "bin" / self.source_path).exists():
             target_path = target_dir / self.target_name
             if target_path.exists():
                 log.error(f"will not overwrite {target_path}")
