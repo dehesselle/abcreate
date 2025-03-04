@@ -30,8 +30,7 @@ class Locales(BaseXmlModel):
             locale.install(bundle_dir, source_dir)
 
         if locale := self.main_locale:
-            Plist(bundle_dir).install()
-            Plist(bundle_dir).CFBundleLocalizations = [
+            Plist(source_path=None).CFBundleLocalizations = [
                 p.parent.parent.name
                 for p in (bundle_dir / "Contents" / "Resources" / "locale").rglob(
                     locale.name

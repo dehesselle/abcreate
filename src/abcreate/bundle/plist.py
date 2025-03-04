@@ -4,54 +4,57 @@
 
 from pathlib import Path
 import logging
-import importlib.resources
+from importlib.resources import files
 from shutil import copy
 from enum import Enum
+from typing import Optional
 import plistlib
+
+from pydantic_xml import BaseXmlModel, element
 
 log = logging.getLogger("plist")
 
+INFO_PLIST = files("abcreate.bundle") / "Info.plist"
+target_path = None
 
-class Plist:
-    PLIST_NAME = "Info.plist"
+
+class Plist(BaseXmlModel):
+    source_path: Optional[str] = None
 
     class Key(Enum):
         CFBUNDLEEXECUTABLE = "CFBundleExecutable"
         CFBUNDLEICONFILE = "CFBundleIconFile"
         CFBUNDLELOCALIZATIONS = "CFBundleLocalizations"
 
-    def __init__(self, bundle_dir: Path):
-        self.bundle_dir = bundle_dir
+    def install(self, bundle_dir: Path, source_dir: Path):
+        target_dir = bundle_dir / "Contents"
+        global target_path
+        target_path = target_dir / "Info.plist"
 
-    @property
-    def target_path(self) -> Path:
-        return self.bundle_dir / "Contents" / self.PLIST_NAME
-
-    def install(self):
-        if self.target_path.exists():
-            log.debug(f"already installed {self.target_path}")
+        if target_path.exists():
+            log.debug(f"already installed {target_path}")
         else:
-            self.target_path.parent.mkdir(parents=True, exist_ok=True)
-            with importlib.resources.path("abcreate.bundle", self.PLIST_NAME) as source:
-                log.debug(f"creating {self.target_path.as_posix()}")
-                copy(source, self.target_path)
+            target_dir.mkdir(parents=True, exist_ok=True)
+            if self.source_path:
+                source_path = source_dir / self.source_path
+            else:
+                source_path = INFO_PLIST
 
-    @property
-    def is_installed(self) -> bool:
-        return self.target_path.exists()
+            log.debug(f"copy {source_path} to {target_path}")
+            copy(source_path, target_path)
 
     def _write(self, key: str, value: str):
         if plist := self._read_all():
             plist[key] = value
-            with open(self.target_path, "wb") as file:
+            with open(target_path, "wb") as file:
                 plistlib.dump(plist, file)
 
     def _read_all(self):
-        if self.is_installed:
-            with open(self.target_path, "rb") as file:
+        if target_path and target_path.exists():
+            with open(target_path, "rb") as file:
                 return plistlib.load(file)
         else:
-            log.error(f"{self.PLIST_NAME} hasn't been installed yet")
+            log.error("Info.plist hasn't been installed yet")
             return None
 
     def _read(self, key: str) -> str:
