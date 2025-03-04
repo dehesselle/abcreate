@@ -5,8 +5,9 @@
 import logging
 from pathlib import Path
 from shutil import rmtree
+from typing import Optional
 
-from pydantic_xml import BaseXmlModel
+from pydantic_xml import BaseXmlModel, element
 
 from .executables import Executables
 from .frameworks import Frameworks
@@ -22,7 +23,7 @@ log = logging.getLogger("bundle")
 
 class Bundle(BaseXmlModel, tag="bundle"):
     executables: Executables
-    frameworks: Frameworks
+    frameworks: Optional[Frameworks] = element(default=None)
     gdkpixbuf: GdkPixbuf
     gir: Gir
     gtk3: Gtk3
@@ -56,7 +57,8 @@ class Bundle(BaseXmlModel, tag="bundle"):
         self.gdkpixbuf.install(bundle_dir, source_dir)
         self.gir.install(bundle_dir, source_dir)
         self.libraries.install(bundle_dir, source_dir)
-        self.frameworks.install(bundle_dir, source_dir)
+        if self.frameworks:
+            self.frameworks.install(bundle_dir, source_dir)
         self.executables.install(bundle_dir, source_dir)
         self.icons.install(bundle_dir, source_dir)
         self.locales.install(bundle_dir, source_dir)
