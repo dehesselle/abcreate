@@ -11,7 +11,7 @@ from pydantic_xml import BaseXmlModel
 from .executables import Executables
 from .frameworks import Frameworks
 from .gtk import GdkPixbuf, Gir, Gtk3
-from .icon import Icon
+from .icons import Icons
 from .libraries import Libraries
 from .locales import Locales
 from .resources import Resources
@@ -25,7 +25,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     gdkpixbuf: GdkPixbuf
     gir: Gir
     gtk3: Gtk3
-    icon: Icon
+    icons: Icons
     libraries: Libraries
     locales: Locales
     resources: Resources
@@ -51,6 +51,6 @@ class Bundle(BaseXmlModel, tag="bundle"):
         self.libraries.install(bundle_dir, source_dir)
         self.frameworks.install(bundle_dir, source_dir)
         self.executables.install(bundle_dir, source_dir)
-        self.icon.install(bundle_dir, source_dir)
+        self.icons.install(bundle_dir, source_dir)
         self.locales.install(bundle_dir, source_dir)
         self.resources.install(bundle_dir, source_dir)

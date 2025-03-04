@@ -10,7 +10,9 @@
   <gdkpixbuf>dummy</gdkpixbuf>
   <gir command="/Users/Shared/work/jhb-0.55/usr/bin/jhb run g-ir-compiler">dummy</gir>
   <gtk3>dummy</gtk3>
-  <icon>tmp/Meld.icns</icon>
+  <icons>
+    <icon>tmp/Meld.icns</icon>
+  </icons>
   <libraries>
     <library>libgtksourceview-4.0.dylib</library>
     <library>libreadline.8.dylib</library>
