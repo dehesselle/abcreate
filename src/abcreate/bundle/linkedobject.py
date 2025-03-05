@@ -13,20 +13,51 @@ import logging
 log = logging.getLogger("linkedobj")
 
 
-class RelativeLinkPath(Enum):
-    EXECUTABLE_PATH = "@executable_path"
-    LOADER_PATH = "@loader_path"
-    RPATH = "@rpath"
-
-
-class SystemLinkPath(Enum):
-    SYSTEM = "/System"
-    USR = "/usr"
-
-
 class LinkedObject:
+    class SystemLinkPath(Enum):
+        SYSTEM = "/System"
+        USR = "/usr"
+
+    class RelativeLinkPath(Enum):
+        EXECUTABLE_PATH = "@executable_path"
+        LOADER_PATH = "@loader_path"
+        RPATH = "@rpath"
+
     def __init__(self, path: Path):
         self.path = path
+
+    @classmethod
+    def is_relative_path(cls, path: Path, linkpath_type: RelativeLinkPath = None):
+        if linkpath_type:
+            return path.parts[0] == linkpath_type
+        else:
+            return (
+                path.parts[0] in [item.value for item in cls.RelativeLinkPath]
+                or not path.parent.name
+            )
+
+    @classmethod
+    def is_system_path(cls, path: Path):
+        # Why 0:2? the leading slash counts as part
+        return "".join(path.parts[0:2]) in [item.value for item in cls.SystemLinkPath]
+
+    def _make_absolute(self, path: Path) -> Path:
+        if LinkedObject.is_relative_path(path):
+            # TODO: This is an oversimplifaction. Best case, the first rpath
+            # is correct...
+            if (
+                LinkedObject.is_relative_path(path, self.RelativeLinkPath.RPATH)
+                and self.rpath
+            ):
+                return self.rpath / path.name
+            else:
+                # ...and this is just guesswork.
+                if self.path.parent.name == "bin":
+                    return self.path.parent.parent / "lib" / path.name
+                else:
+                    return self.path.parent / path.name
+        else:
+            return path
 
     def _otool(self, args: str) -> list:
         try:
@@ -106,9 +137,7 @@ class LinkedObject:
             if match := re.match("\t(.+) \(compatibility", line):
                 library = Path(match.group(1))
                 if exclude_system:
-                    if "".join(library.parts[0:2]) not in [
-                        item.value for item in SystemLinkPath
-                    ]:
+                    if not LinkedObject.is_system_path(library):
                         result.append(library)
                 else:
                     result.append(library)
@@ -118,6 +147,7 @@ class LinkedObject:
         self, exclude_system: bool = False, _dependencies=list()
     ) -> List[Path]:
         for library in self.depends_on(exclude_system):
+            library = self._make_absolute(library)
             if library not in _dependencies:
                 _dependencies.append(library)
                 [
