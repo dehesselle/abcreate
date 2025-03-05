@@ -22,7 +22,10 @@ class Library(BaseXmlModel):
         path = Path(value)
         if path.is_absolute():
             return cls.path_relative_to(path, "lib").as_posix()
-        return value
+        elif LinkedObject.is_relative_path(path):
+            return f"{path.name}"
+        else:
+            return value
 
     @property
     def target_name(self) -> str:
