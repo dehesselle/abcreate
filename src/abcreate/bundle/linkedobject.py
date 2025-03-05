@@ -29,18 +29,30 @@ class LinkedObject:
         self.path = path
 
     def _otool(self, args: str) -> list:
-        return subprocess.run(
-            shlex.split(f"/usr/bin/otool {args} {self.path}"),
-            capture_output=True,
-            encoding="utf-8",
-        ).stdout.splitlines()
+        try:
+            sp = subprocess.run(
+                shlex.split(f"/usr/bin/otool {args} {self.path}"),
+                capture_output=True,
+                encoding="utf-8",
+            )
+            sp.check_returncode()
+            return sp.stdout.splitlines()
+        except subprocess.CalledProcessError:
+            log.error(f"otool {args} failed for {self.path}")
+            return list()
 
     def _install_name_tool(self, args: str) -> list:
-        return subprocess.run(
-            shlex.split(f"/usr/bin/install_name_tool {args} {self.path}"),
-            capture_output=True,
-            encoding="utf-8",
-        ).stdout.splitlines()
+        try:
+            sp = subprocess.run(
+                shlex.split(f"/usr/bin/install_name_tool {args} {self.path}"),
+                capture_output=True,
+                encoding="utf-8",
+            )
+            sp.check_returncode()
+            return sp.stdout.splitlines()
+        except subprocess.CalledProcessError:
+            log.error(f"install_name_tool {args} failed for {self.path}")
+            return list()
 
     @property
     def install_name(self) -> str:
