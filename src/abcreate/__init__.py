@@ -28,13 +28,25 @@ class CollectStatisticsHandler(logging.StreamHandler):
 
     def emit(self, record):
         try:
-            self.message_counter[record.levelno] += 1
+            CollectStatisticsHandler.message_counter[record.levelno] += 1
         except KeyError:
-            self.message_counter[record.levelno] = 1
+            CollectStatisticsHandler.message_counter[record.levelno] = 1
 
     @classmethod
     def has_errors(cls) -> bool:
         return logging.ERROR in cls.message_counter
+
+    @classmethod
+    def has_warnings(cls) -> bool:
+        return logging.WARNING in cls.message_counter
+
+    @classmethod
+    def errors(cls) -> int:
+        return cls.message_counter[logging.ERROR] if cls.has_errors() else 0
+
+    @classmethod
+    def warnings(cls) -> int:
+        return cls.message_counter[logging.WARNING] if cls.has_warnings() else 0
 
 
 class Command(Enum):
@@ -94,7 +106,11 @@ def main() -> None:
         log.error("wrong invocation")
         parser.print_usage()
 
-    log.info("finished")
+    log.info(
+        "finished with {} warnings and {} errors".format(
+            CollectStatisticsHandler.warnings(), CollectStatisticsHandler.errors()
+        )
+    )
 
     if CollectStatisticsHandler.has_errors():
         exit(1)
