@@ -1,6 +1,6 @@
 # application bundle creator
 
-This is an opinionated CLI tool (`abcreate`) that does the heavy lifting when packaging a macOS application. It was inspired by [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) and is my replacement for it.
+This is an opinionated CLI tool (`abcreate`) to create a macOS application bundle from a directory tree containing executables and libraries. It was inspired by and built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects.
 
 ## License
 
