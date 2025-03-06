@@ -58,13 +58,15 @@ def setup_logging() -> None:
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(
         logging.Formatter(
-            "%(asctime)-23s | %(name)-10s | %(levelname)-8s | %(message)s"
+            "%(asctime)-23s | %(name)-14s | %(funcName)-20s | %(levelname)-8s | %(message)s"
         )
     )
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(logging.INFO)
     stream_handler.setFormatter(
-        logging.Formatter("%(asctime)-23s [%(name)-10s] %(levelname)s: %(message)s")
+        logging.Formatter(
+            "%(asctime)-23s [%(name)-8s] [%(funcName)-10s] %(levelname)s: %(message)s"
+        )
     )
     logging.basicConfig(
         level=logging.DEBUG,
