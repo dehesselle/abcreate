@@ -7,19 +7,20 @@ import logging
 from importlib.resources import files
 from shutil import copy
 from enum import Enum
-from typing import Optional
+from typing import Optional, ClassVar
 import plistlib
 
-from pydantic_xml import BaseXmlModel, element
+from pydantic_xml import BaseXmlModel
 
 log = logging.getLogger("plist")
 
 INFO_PLIST = files("abcreate.bundle") / "Info.plist"
-target_path = None
 
 
 class Plist(BaseXmlModel):
     source_path: Optional[str] = None
+
+    target_path: ClassVar[Path] = None
 
     class Key(Enum):
         CFBUNDLEEXECUTABLE = "CFBundleExecutable"
@@ -28,11 +29,9 @@ class Plist(BaseXmlModel):
 
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents"
-        global target_path
-        target_path = target_dir / "Info.plist"
-
-        if target_path.exists():
-            log.debug(f"already installed {target_path}")
+        Plist.target_path = target_dir / "Info.plist"
+        if Plist.target_path.exists():
+            log.debug(f"already installed {Plist.target_path}")
         else:
             target_dir.mkdir(parents=True, exist_ok=True)
             if self.source_path:
@@ -40,18 +39,18 @@ class Plist(BaseXmlModel):
             else:
                 source_path = INFO_PLIST
 
-            log.debug(f"copy {source_path} to {target_path}")
-            copy(source_path, target_path)
+            log.debug(f"copy {source_path} to {Plist.target_path}")
+            copy(source_path, Plist.target_path)
 
     def _write(self, key: str, value: str):
         if plist := self._read_all():
             plist[key] = value
-            with open(target_path, "wb") as file:
+            with open(Plist.target_path, "wb") as file:
                 plistlib.dump(plist, file)
 
     def _read_all(self):
-        if target_path and target_path.exists():
-            with open(target_path, "rb") as file:
+        if Plist.target_path and Plist.target_path.exists():
+            with open(Plist.target_path, "rb") as file:
                 return plistlib.load(file)
         else:
             log.error("Info.plist hasn't been installed yet")
