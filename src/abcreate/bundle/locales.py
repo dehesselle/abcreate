@@ -32,7 +32,7 @@ class Locales(BaseXmlModel):
         if locale := self.main_locale:
             Plist(source_path=None).CFBundleLocalizations = [
                 p.parent.parent.name
-                for p in (bundle_dir / "Contents" / "Resources" / "locale").rglob(
-                    locale.name
-                )
+                for p in (
+                    bundle_dir / "Contents" / "Resources" / "share" / "locale"
+                ).rglob(locale.name)
             ]
