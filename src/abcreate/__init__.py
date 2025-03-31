@@ -49,6 +49,12 @@ class CollectStatisticsHandler(logging.StreamHandler):
         return cls.message_counter[logging.WARNING] if cls.has_warnings() else 0
 
 
+class CustomLogRecord(logging.LogRecord):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.function_at_module = f"{self.name}:{self.funcName}"
+
+
 class Command(Enum):
     CREATE = "create"
 
@@ -65,9 +71,10 @@ def setup_logging() -> None:
     stream_handler.setLevel(logging.INFO)
     stream_handler.setFormatter(
         logging.Formatter(
-            "%(asctime)-23s [%(name)-8s] [%(funcName)-10s] %(levelname)s: %(message)s"
+            "%(asctime)-23s [%(function_at_module)-18s] %(levelname)s: %(message)s"
         )
     )
+    logging.setLogRecordFactory(CustomLogRecord)
     logging.basicConfig(
         level=logging.DEBUG,
         handlers=[
