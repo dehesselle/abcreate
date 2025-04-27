@@ -9,7 +9,7 @@ from shutil import copy
 from pydantic_xml import BaseXmlModel
 from pydantic import field_validator
 
-from .linkedobject import LinkedObject
+from abcreate.util import LinkedObject
 
 log = logging.getLogger("library")
 
