@@ -33,7 +33,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     plist: Plist
     resources: Resources
 
-    def create(self, target_dir: str, source_dir: str):
+    def create(self, target_dir: Path, source_dir: Path):
         bundle_dir = target_dir / Path(
             self.executables.main_executable.target_name
         ).with_suffix(".app")
@@ -44,8 +44,6 @@ class Bundle(BaseXmlModel, tag="bundle"):
 
         log.info(f"creating {bundle_dir.as_posix()}")
         bundle_dir.mkdir(parents=True)
-
-        source_dir = Path(source_dir)
 
         # order is on purpose:
         #   - plist first because others will modify it

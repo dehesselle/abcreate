@@ -96,9 +96,21 @@ def main() -> None:
     p_create = p_commands.add_parser(
         Command.CREATE.value, help="create application bundle"
     )
-    p_create.add_argument("file")
-    p_create.add_argument("-s", "--source_dir", required=True, help="source directory")
-    p_create.add_argument("-t", "--target_dir", required=True, help="target directory")
+    p_create.add_argument("file", type=Path, help="XML configuration file")
+    p_create.add_argument(
+        "-s",
+        "--source_dir",
+        type=Path,
+        required=True,
+        help="install prefix of the application",
+    )
+    p_create.add_argument(
+        "-t",
+        "--target_dir",
+        type=Path,
+        required=True,
+        help="target directory for the .app bundle",
+    )
 
     args = parser.parse_args()
 
@@ -106,7 +118,7 @@ def main() -> None:
 
     if args.command == Command.CREATE.value:
         try:
-            xml_doc = Path(args.file).read_text()
+            xml_doc = args.file.read_text()
             bundle = Bundle.from_xml(xml_doc)
             bundle.create(args.target_dir, args.source_dir)
         except Exception as e:
