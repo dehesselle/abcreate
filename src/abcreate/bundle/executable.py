@@ -44,16 +44,26 @@ class Executable(BaseXmlModel):
                 for path in lo.flattened_dependency_tree(exclude_system=True):
                     library = Library(source_path=path.as_posix())
                     if library.is_framework:
-                        # frameworks can only be processed with info from bundle.xml
-                        log.debug(f"skipping framework library {library.source_path}")
+                        # frameworks are taken care of separately
+                        log.debug(
+                            f"intentionally skipping framework library {library.source_path}"
+                        )
                         pass
                     else:
                         library.install(bundle_dir, source_dir)
-                # adjust install names
+
+                # adjust install names: top level...
+                frameworks_dir = bundle_dir / "Contents" / "Frameworks"
                 lo = LinkedObject(target_path)
                 lo.change_dependent_install_names(
                     "@executable_path/../Frameworks",
-                    (bundle_dir / "Contents" / "Frameworks").as_posix(),
+                    frameworks_dir.as_posix(),
                 )
+                # ...and one nesting level
+                for sub_dir in filter(Path.is_dir, frameworks_dir.iterdir()):
+                    lo.change_dependent_install_names(
+                        f"@executable_path/../Frameworks/{sub_dir.name}",
+                        sub_dir.as_posix(),
+                    )
         else:
             log.error(f"cannot locate {self.source_path}")

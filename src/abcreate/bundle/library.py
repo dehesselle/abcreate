@@ -72,9 +72,9 @@ class Library(BaseXmlModel):
                     for path in lo.flattened_dependency_tree(exclude_system=True):
                         library = Library(source_path=path.as_posix())
                         if library.is_framework:
-                            # frameworks can only be processed with info from bundle.xml
+                            # frameworks are taken care of separately
                             log.debug(
-                                f"skipping framework library {library.source_path}"
+                                f"intentionally skipping framework library {library.source_path}"
                             )
                         else:
                             library.install(bundle_dir, source_dir)

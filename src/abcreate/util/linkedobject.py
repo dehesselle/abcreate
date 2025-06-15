@@ -4,7 +4,7 @@
 
 from enum import Enum
 from pathlib import Path
-from typing import List
+from typing import List, Set
 import subprocess
 import shlex
 import re
@@ -23,19 +23,20 @@ class LinkedObject:
         LOADER_PATH = "@loader_path"
         RPATH = "@rpath"
 
-    def __init__(self, path: Path):
-        self.path = path
+    resolved_rpaths: Set[Path] = set()
 
     @classmethod
-    def is_relative_path(
-        cls, path: Path, linkpath_type: RelativeLinkPath = None
-    ) -> bool:
-        if linkpath_type:
-            return path.parts[0] == linkpath_type
+    def is_framework(cls, path: Path) -> bool:
+        return ".framework/" in path.as_posix()
+
+    @classmethod
+    def is_relative_path(cls, path: Path, relative_to=str()) -> bool:
+        if relative_to:
+            return path.is_relative_to(relative_to)
         else:
             return (
-                path.parts[0] in [item.value for item in cls.RelativeLinkPath]
-                or not path.parent.name
+                path.parts[0] in [item.value for item in LinkedObject.RelativeLinkPath]
+                or not path.parent.is_absolute()
             )
 
     @classmethod
@@ -43,29 +44,47 @@ class LinkedObject:
         # Why 0:2? the leading slash counts as part
         return "".join(path.parts[0:2]) in [item.value for item in cls.SystemLinkPath]
 
-    @classmethod
-    def is_framework(cls, path: Path) -> bool:
-        return ".framework/" in path.as_posix()
+    def __init__(self, path: Path):
+        self.path = path
+        # TODO: This depends on being populated before we encounter the first lib
+        # that uses rpath.
+        if not LinkedObject.is_relative_path(self.path):
+            self._resolve_rpaths()
 
     def _make_absolute(self, path: Path) -> Path:
         if LinkedObject.is_relative_path(path) and not LinkedObject.is_framework(path):
-            # TODO: This is an oversimplifaction. Best case, the first rpath
-            # is correct...
-            if (
-                LinkedObject.is_relative_path(path, self.RelativeLinkPath.RPATH)
-                and self.rpath
+            if LinkedObject.is_relative_path(
+                path, LinkedObject.RelativeLinkPath.RPATH.value
             ):
-                return self.rpath / path.name
+                for rpath in self.resolved_rpaths:
+                    potential_path = rpath / "/".join(path.parts[1:])
+                    if potential_path.is_file():
+                        return potential_path
+                log.error(f"failed to resolve rpath for {path}")
+                return path
             else:
-                # ...and this is just guesswork.
-                if self.path.parent.name == "bin":
-                    return self.path.parent.parent / "lib" / path.name
-                else:
-                    return self.path.parent / path.name
+                match self.path.parent.name:
+                    case "bin":
+                        return self.path.parent.parent / "lib" / path.name
+                    case _:
+                        return self.path.parent / path.name
         else:
             return path
 
-    def _otool(self, args: str) -> list:
+    def _otool(self, args: str) -> List[str]:
+        """Run ``otool`` and return its output.
+
+        Parameters
+        ----------
+        args : str
+            The arguments for the ``otool`` command. This includes options
+            and filename.
+
+        Returns
+        -------
+        List[str]
+            The commmand's stdout as list of strings.
+        """
         try:
             sp = subprocess.run(
                 shlex.split(f"/usr/bin/otool {args} {self.path}"),
@@ -101,15 +120,22 @@ class LinkedObject:
         self._install_name_tool(f"-id {install_name}")
 
     @property
-    def rpath(self) -> list:
+    def rpaths(self) -> List[Path]:
         result = list()
         line_iter = iter(self._otool("-l"))
         for line in line_iter:
             if re.match("\s+cmd LC_RPATH", line):
                 next(line_iter)
                 if match := re.match("\s+path (.+) \(offset.+", next(line_iter)):
-                    result.append(match.group(1))
+                    result.append(Path(match.group(1)))
         return result
+
+    def _resolve_rpaths(self) -> None:
+        for rpath in self.rpaths:
+            if rpath.parts[0] in (LinkedObject.RelativeLinkPath.LOADER_PATH.value,):
+                LinkedObject.resolved_rpaths.add(
+                    (self.path.parent / "/".join(rpath.parts[1:])).resolve()
+                )
 
     def add_rpath(self, rpath: str):
         self._install_name_tool(f"-add_rpath {rpath}")
@@ -137,7 +163,7 @@ class LinkedObject:
         result = list()
 
         if LinkedObject.is_framework(self.path):
-            log.debug(f"skipping {self.path}")
+            log.debug(f"intentionally skipping framework library {self.path}")
         else:
             skip_lines = 2 if self.install_name else 1
             for line in self._otool("-L")[skip_lines:]:
@@ -160,11 +186,10 @@ class LinkedObject:
             library = self._make_absolute(library)
             if library not in _dependencies:
                 _dependencies.append(library)
-                [
-                    _dependencies.append(l)
-                    for l in LinkedObject(library).flattened_dependency_tree(
-                        exclude_system, _dependencies
-                    )
-                    if l not in _dependencies
-                ]
+                for l in LinkedObject(library).flattened_dependency_tree(
+                    exclude_system,
+                    _dependencies,
+                ):
+                    if l not in _dependencies:
+                        _dependencies.append(l)
         return _dependencies
