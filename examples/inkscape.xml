@@ -7,6 +7,9 @@
     <executable>gs</executable>
     <executable>gtk4-demo</executable>
   </executables>
+  <symlinks>
+    <symlink>../Frameworks/Python.framework/Versions/Current/bin/python3</symlink>
+  </symlinks>
   <frameworks>
     <framework>tmp/Python.framework</framework>
   </frameworks>

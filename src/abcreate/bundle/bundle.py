@@ -18,12 +18,14 @@ from .libraries import Libraries
 from .locales import Locales
 from .plist import Plist
 from .resources import Resources
+from .symlinks import Symlinks
 
 log = logging.getLogger("bundle")
 
 
 class Bundle(BaseXmlModel, tag="bundle"):
     executables: Executables
+    symlinks: Optional[Symlinks] = element(default=None)
     frameworks: Optional[Frameworks] = element(default=None)
     gdkpixbuf: GdkPixbuf
     gir: Gir
@@ -58,18 +60,32 @@ class Bundle(BaseXmlModel, tag="bundle"):
         #   - libraries
         #   - executables
         #   -  resources
+        log.info("stage: plist")
         self.plist.install(bundle_dir, source_dir)
         if self.gtk3:
+            log.info("stage: gtk3")
             self.gtk3.install(bundle_dir, source_dir)
         if self.gtk4:
+            log.info("stage: gtk4")
             self.gtk4.install(bundle_dir, source_dir)
+        log.info("stage: gdkpixpuf")
         self.gdkpixbuf.install(bundle_dir, source_dir)
+        log.info("stage: gir")
         self.gir.install(bundle_dir, source_dir)
         if self.libraries:
+            log.info("stage: libraries")
             self.libraries.install(bundle_dir, source_dir)
         if self.frameworks:
+            log.info("stage: frameworks")
             self.frameworks.install(bundle_dir, source_dir)
+        log.info("stage: executables")
         self.executables.install(bundle_dir, source_dir)
+        log.info("stage: icons")
         self.icons.install(bundle_dir, source_dir)
+        log.info("stage: locales")
         self.locales.install(bundle_dir, source_dir)
+        log.info("stage: resources")
         self.resources.install(bundle_dir, source_dir)
+        if self.symlinks:
+            log.info("stage: symlinks")
+            self.symlinks.install(bundle_dir)
