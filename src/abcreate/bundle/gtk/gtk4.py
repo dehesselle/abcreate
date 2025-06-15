@@ -13,14 +13,6 @@ log = logging.getLogger("gtk")
 
 
 class Gtk4(BaseXmlModel):
-    @classmethod
-    def path_relative_to(cls, path: Path, part: str) -> str:
-        try:
-            index = path.parts.index(part)
-            return "/".join(path.parts[index + 1 :])
-        except ValueError:
-            return path
-
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents" / "Frameworks"
 

@@ -14,14 +14,6 @@ log = logging.getLogger("gdkpixbuf")
 
 
 class GdkPixbuf(BaseXmlModel):
-    @classmethod
-    def path_relative_to(cls, path: Path, part: str) -> str:
-        try:
-            index = path.parts.index(part)
-            return "/".join(path.parts[index + 1 :])
-        except ValueError:
-            return path
-
     def install(self, bundle_dir: Path, source_dir: Path):
         # pixbuf loaders: *.so files
         target_dir = bundle_dir / "Contents" / "Frameworks"

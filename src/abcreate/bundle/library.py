@@ -27,10 +27,6 @@ class Library(BaseXmlModel):
         else:
             return value
 
-    @property
-    def target_name(self) -> str:
-        return Path(self.source_path).name
-
     @classmethod
     def path_relative_to(cls, path: Path, part: str) -> Path:
         try:
