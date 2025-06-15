@@ -4,7 +4,7 @@
 
 This tool was inspired by and built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects. Features and fixes will be developed as I go and to the extent as required for said projects. There are no plans to turn this into a general-purpose "swiss army knife" of packaging tools.
 
-💁 _For the time being, this is to be considered "alpha" software. It works for a few select cases but it's neither feature complete for my purposes nor robust._
+💁 _For the time being, this is to be considered "alpha" software. It works for the cases I need it to work._
 
 ## Features
 
@@ -12,7 +12,6 @@ This tool was inspired by and built to replace [GTK Mac Bundler](https://gitlab.
 - Automatically pull in linked libraries.
 - Automatically adjust library link paths in executables and libraries with relocatability in mind.
 - Targeted towards GTK based apps (GTK versions 3 and 4), e.g. take care of pixbuf loaders, compile typelib files etc.  
-  _GTK 4 support not available yet!_
 
 ## Installation
 
