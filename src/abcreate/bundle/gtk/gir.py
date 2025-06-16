@@ -18,6 +18,7 @@ log = logging.getLogger("gir")
 
 
 class Gir(BaseXmlModel):
+    lib_dir: Optional[str] = attr(default="@executable_path/../Frameworks")
     command: Optional[str] = attr(default="g-ir-compiler")
 
     def _compile(self, source_path: Path, target_path: Path):
@@ -63,7 +64,7 @@ class Gir(BaseXmlModel):
                     if len(element.attrib["shared-library"]):
                         element.attrib["shared-library"] += ","
                     element.attrib["shared-library"] += (
-                        Path("@executable_path/../Frameworks") / Path(library).name
+                        Path(self.lib_dir) / Path(library).name
                     ).as_posix()
 
                 with TemporaryDirectory() as temp_dir:

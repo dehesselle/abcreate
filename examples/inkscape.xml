@@ -14,7 +14,7 @@
     <framework>tmp/Python.framework</framework>
   </frameworks>
   <gdkpixbuf/>
-  <gir command="/Users/Shared/work/mibap-1.4/usr/bin/jhb run g-ir-compiler"/>
+  <gir command="jhb run g-ir-compiler" lib_dir="@rpath"/>
   <gtk4/>
   <icons>
     <icon>tmp/Inkscape.icns</icon>
