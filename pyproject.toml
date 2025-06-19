@@ -28,7 +28,7 @@ classifiers = [
 ]
 
 [project.urls]
-#"Bug Reports" = "https://github.com/dehesselle/abcreate/issues"
+"Bug Reports" = "https://github.com/dehesselle/abcreate/issues"
 "Source" = "https://github.com/dehesselle/abcreate"
 
 [project.scripts]
