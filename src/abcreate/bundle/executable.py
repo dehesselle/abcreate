@@ -41,6 +41,9 @@ class Executable(BaseXmlModel):
 
                 # pull in dependencies
                 lo = LinkedObject(source_path)
+                if not lo.rpaths:
+                    log.debug(f"assuming lib as default rpath for {source_path}")
+                    lo.resolved_rpaths.add(source_dir / "lib")
                 for path in lo.flattened_dependency_tree(exclude_system=True):
                     library = Library(source_path=path.as_posix())
                     if library.is_framework:
