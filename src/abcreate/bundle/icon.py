@@ -28,5 +28,3 @@ class Icon(BaseXmlModel):
         else:
             log.debug(f"copy {source_path} to {target_path}")
             copy(source_path, target_path)
-
-            Plist(source_path=None).CFBundleIconFile = target_path.name
