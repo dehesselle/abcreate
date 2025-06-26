@@ -16,6 +16,6 @@ log = logging.getLogger("framework")
 class Frameworks(BaseXmlModel):
     frameworks: List[Framework] = element(tag="framework")
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         for framework in self.frameworks:
-            framework.install(bundle_dir, source_dir)
+            framework.install(bundle_dir, install_prefix)

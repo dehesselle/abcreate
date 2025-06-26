@@ -16,6 +16,6 @@ log = logging.getLogger("resource")
 class Resources(BaseXmlModel):
     resources: List[Resource] = element(tag="resource")
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         for resource in self.resources:
-            resource.install(bundle_dir, source_dir)
+            resource.install(bundle_dir, install_prefix)

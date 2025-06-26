@@ -2,7 +2,7 @@
 
 `abcreate` is a CLI tool to create a macOS application bundle from executables, libraries and resource files in a given installation prefix directory. It takes its instructions from an XML based configuration file (see the [examples](examples)).
 
-This tool was inspired by and built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects. Features and fixes will be developed as I go and to the extent as required for said projects. There are no plans to turn this into a general-purpose "swiss army knife" of packaging tools.
+This tool was built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects. That means it is specifically targeted towards GTK based applications and makes certain assumptions like "I always expect you to specify a GTK version". It is _not_ a general-purpose packaging tool at this point. Features and fixes will be developed as I go and to the extent as required for my projects.
 
 💁 _For the time being, this is to be considered "alpha" software. It works for the cases I need it to work._
 
@@ -26,14 +26,14 @@ pip install abcreate
 Let's look at an example:
 
 ```bash
-abcreate create bundle.xml -s $HOME/install_prefix -t $HOME
+abcreate create bundle.xml -i $HOME/install_prefix -o $HOME/output_dir
 ```
 
 - The first argument is a command. At the moment, there is only one command available, which is `create`.
 - The `create` command expects
   - the name of a XML configuration file, e.g. `bundle.xml`
-  - a source directory (`-s`) containing `bin`, `lib`, `share` etc. directories, i.e. the install prefix of the software you want to package
-  - a target directory (`-t`) where the application bundle will be created in
+  - the install prefix directory (`-i`) containing `bin`, `lib`, `share` etc. directories of the applicatin you want to package
+  - the output directory (`-o`) where the application bundle will be created in
 
 ## License
 

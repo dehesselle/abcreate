@@ -39,15 +39,15 @@ class Library(BaseXmlModel):
     def is_framework(self) -> bool:
         return ".framework/" in self.source_path
 
-    def install(self, bundle_dir: Path, source_dir: Path, flatten: bool = False):
+    def install(self, bundle_dir: Path, install_prefix: Path, flatten: bool = False):
         target_dir = bundle_dir / "Contents" / "Frameworks"
         if not target_dir.exists():
             log.debug(f"creating {target_dir}")
             target_dir.mkdir(parents=True)
 
-        for source_path in (source_dir / "lib" / Path(self.source_path).parent).glob(
-            Path(self.source_path).name
-        ):
+        for source_path in (
+            install_prefix / "lib" / Path(self.source_path).parent
+        ).glob(Path(self.source_path).name):
             if source_path.exists():
                 if flatten:
                     target_path = target_dir / source_path.name
@@ -73,7 +73,7 @@ class Library(BaseXmlModel):
                                 f"intentionally skipping framework library {library.source_path}"
                             )
                         else:
-                            library.install(bundle_dir, source_dir)
+                            library.install(bundle_dir, install_prefix)
 
                     # adjust install names
                     lo = LinkedObject(target_path)

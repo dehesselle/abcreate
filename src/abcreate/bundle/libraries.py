@@ -16,6 +16,6 @@ log = logging.getLogger("library")
 class Libraries(BaseXmlModel):
     libraries: List[Library] = element(tag="library")
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         for library in self.libraries:
-            library.install(bundle_dir, source_dir)
+            library.install(bundle_dir, install_prefix)

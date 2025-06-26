@@ -25,10 +25,10 @@ class Resource(BaseXmlModel):
         except ValueError:
             return path
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "Resources"
 
-        for source_path in (source_dir / Path(self.source_path).parent).glob(
+        for source_path in (install_prefix / Path(self.source_path).parent).glob(
             Path(self.source_path).name
         ):
             if source_path.exists():

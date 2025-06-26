@@ -43,8 +43,8 @@ class Bundle(BaseXmlModel, tag="bundle"):
             log.critical("gtk3 and gtk4 are mutually exclusive")
         return self
 
-    def create(self, target_dir: Path, source_dir: Path):
-        bundle_dir = target_dir / Path(
+    def create(self, output_dir: Path, install_prefix: Path):
+        bundle_dir = output_dir / Path(
             self.executables.main_executable.target_name
         ).with_suffix(".app")
 
@@ -61,31 +61,31 @@ class Bundle(BaseXmlModel, tag="bundle"):
         #   - executables
         #   -  resources
         log.info("stage: plist")
-        self.plist.install(bundle_dir, source_dir)
+        self.plist.install(bundle_dir, install_prefix)
         if self.gtk3:
             log.info("stage: gtk3")
-            self.gtk3.install(bundle_dir, source_dir)
+            self.gtk3.install(bundle_dir, install_prefix)
         if self.gtk4:
             log.info("stage: gtk4")
-            self.gtk4.install(bundle_dir, source_dir)
+            self.gtk4.install(bundle_dir, install_prefix)
         log.info("stage: gdkpixpuf")
-        self.gdkpixbuf.install(bundle_dir, source_dir)
+        self.gdkpixbuf.install(bundle_dir, install_prefix)
         log.info("stage: gir")
-        self.gir.install(bundle_dir, source_dir)
+        self.gir.install(bundle_dir, install_prefix)
         if self.libraries:
             log.info("stage: libraries")
-            self.libraries.install(bundle_dir, source_dir)
+            self.libraries.install(bundle_dir, install_prefix)
         if self.frameworks:
             log.info("stage: frameworks")
-            self.frameworks.install(bundle_dir, source_dir)
+            self.frameworks.install(bundle_dir, install_prefix)
         log.info("stage: executables")
-        self.executables.install(bundle_dir, source_dir)
+        self.executables.install(bundle_dir, install_prefix)
         log.info("stage: icons")
-        self.icons.install(bundle_dir, source_dir)
+        self.icons.install(bundle_dir, install_prefix)
         log.info("stage: locales")
-        self.locales.install(bundle_dir, source_dir)
+        self.locales.install(bundle_dir, install_prefix)
         log.info("stage: resources")
-        self.resources.install(bundle_dir, source_dir)
+        self.resources.install(bundle_dir, install_prefix)
         if self.symlinks:
             log.info("stage: symlinks")
             self.symlinks.install(bundle_dir)

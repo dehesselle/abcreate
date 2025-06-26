@@ -26,12 +26,12 @@ class Executable(BaseXmlModel):
         else:
             return Path(self.source_path).name
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "MacOS"
         if not target_dir.exists():
             target_dir.mkdir(parents=True)
 
-        if (source_path := source_dir / "bin" / self.source_path).exists():
+        if (source_path := install_prefix / "bin" / self.source_path).exists():
             target_path = target_dir / self.target_name
             if target_path.exists():
                 log.error(f"will not overwrite {target_path}")
@@ -53,7 +53,7 @@ class Executable(BaseXmlModel):
                         )
                         pass
                     else:
-                        library.install(bundle_dir, source_dir)
+                        library.install(bundle_dir, install_prefix)
 
                 # adjust install names: top level...
                 frameworks_dir = bundle_dir / "Contents" / "Frameworks"

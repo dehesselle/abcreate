@@ -25,8 +25,8 @@ class Executables(BaseXmlModel):
             log.critical("no executables specified")
             return None
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         for executable in self.executables:
-            executable.install(bundle_dir, source_dir)
+            executable.install(bundle_dir, install_prefix)
 
         Plist(source_path=None).CFBundleExecutable = self.main_executable.target_name

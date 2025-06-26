@@ -22,10 +22,10 @@ class Locale(BaseXmlModel):
         except ValueError:
             return path
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "Resources" / "share" / "locale"
 
-        for source_path in Path(source_dir / "share" / "locale").rglob(self.name):
+        for source_path in Path(install_prefix / "share" / "locale").rglob(self.name):
             target_path = target_dir / self.path_relative_to(source_path, "locale")
             if target_path.exists():
                 log.debug(f"will not overwrite {target_path}")

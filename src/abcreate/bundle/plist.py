@@ -19,7 +19,6 @@ INFO_PLIST = files("abcreate.bundle") / "Info.plist"
 
 class Plist(BaseXmlModel):
     source_path: Optional[str] = None
-
     target_path: ClassVar[Path] = None
 
     class Key(Enum):
@@ -27,7 +26,7 @@ class Plist(BaseXmlModel):
         CFBUNDLEICONFILE = "CFBundleIconFile"
         CFBUNDLELOCALIZATIONS = "CFBundleLocalizations"
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents"
         Plist.target_path = target_dir / "Info.plist"
         if Plist.target_path.exists():
@@ -35,7 +34,7 @@ class Plist(BaseXmlModel):
         else:
             target_dir.mkdir(parents=True, exist_ok=True)
             if self.source_path:
-                source_path = source_dir / self.source_path
+                source_path = install_prefix / self.source_path
             else:
                 source_path = INFO_PLIST
 

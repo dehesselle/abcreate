@@ -32,18 +32,18 @@ def main() -> None:
     )
     p_create.add_argument("file", type=Path, help="XML configuration file")
     p_create.add_argument(
-        "-s",
-        "--source_dir",
+        "-i",
+        "--install_prefix",
         type=Path,
         required=True,
         help="install prefix of the application",
     )
     p_create.add_argument(
-        "-t",
-        "--target_dir",
+        "-o",
+        "--output_dir",
         type=Path,
         required=True,
-        help="target directory for the .app bundle",
+        help="directory to create the .app bundle in",
     )
 
     args = parser.parse_args()
@@ -55,7 +55,7 @@ def main() -> None:
         try:
             xml_doc = args.file.read_text()
             bundle = Bundle.from_xml(xml_doc)
-            bundle.create(args.target_dir, args.source_dir)
+            bundle.create(args.output_dir, args.install_prefix)
         except Exception as e:
             log.critical(e)
     else:

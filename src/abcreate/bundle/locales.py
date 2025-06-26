@@ -25,14 +25,14 @@ class Locales(BaseXmlModel):
             log.error("no locales specified")
             return None
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         for locale in self.locales:
-            locale.install(bundle_dir, source_dir)
+            locale.install(bundle_dir, install_prefix)
 
         if locale := self.main_locale:
             Plist(source_path=None).CFBundleLocalizations = [
-                p.parent.parent.name
-                for p in (
+                path.parent.parent.name
+                for path in (
                     bundle_dir / "Contents" / "Resources" / "share" / "locale"
                 ).rglob(locale.name)
             ]

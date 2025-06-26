@@ -25,8 +25,8 @@ class Icons(BaseXmlModel):
             log.critical("no icons specified")
             return None
 
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def install(self, bundle_dir: Path, install_prefix: Path):
         for icon in self.icons:
-            icon.install(bundle_dir, source_dir)
+            icon.install(bundle_dir, install_prefix)
 
         Plist(source_path=None).CFBundleIconFile = Path(self.main_icon.source_path).name
