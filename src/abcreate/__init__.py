@@ -8,7 +8,7 @@ from pathlib import Path
 from enum import Enum
 
 from abcreate.bundle import Bundle
-from abcreate.util.log import setup_logging, statistics
+from abcreate.util.log import setup_logging, logstats
 
 try:
     from abcreate._version import version
@@ -61,9 +61,7 @@ def main() -> None:
     else:
         parser.print_usage()
 
-    log.info(
-        f"finished with {statistics.warnings} warnings and {statistics.errors} errors"
-    )
+    log.info(f"finished with {logstats.warnings} warnings and {logstats.errors} errors")
 
-    if statistics.errors:
+    if logstats.errors:
         exit(1)

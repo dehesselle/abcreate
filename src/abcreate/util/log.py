@@ -45,7 +45,7 @@ class CustomLogRecord(logging.LogRecord):
         self.function_at_module = f"{self.name}:{self.funcName}"
 
 
-statistics = CollectStatisticsHandler()
+logstats = CollectStatisticsHandler()
 
 
 def setup_logging(logfile: Path) -> None:
@@ -71,7 +71,7 @@ def setup_logging(logfile: Path) -> None:
         handlers=[
             file_handler,
             stream_handler,
-            statistics,
+            logstats,
             ExitOnCriticalHandler(),
         ],
     )
