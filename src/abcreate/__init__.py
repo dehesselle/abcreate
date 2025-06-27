@@ -55,9 +55,11 @@ def main() -> None:
         try:
             xml_doc = args.file.read_text()
             bundle = Bundle.from_xml(xml_doc)
-            bundle.create(args.output_dir, args.install_prefix)
         except Exception as e:
             log.critical(e)
+        else:
+            bundle.create(args.output_dir, args.install_prefix)
+
     else:
         parser.print_usage()
 
