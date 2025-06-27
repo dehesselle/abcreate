@@ -18,7 +18,7 @@ INFO_PLIST = files("abcreate.bundle") / "Info.plist"
 
 
 class Plist(BaseXmlModel):
-    source_path: Optional[str] = None
+    source_path: Optional[Path] = None
     target_path: ClassVar[Path] = None
 
     class Key(Enum):

@@ -41,7 +41,7 @@ class Gir(BaseXmlModel):
         target_dir = bundle_dir / "Contents" / "Resources" / "lib" / "girepository-1.0"
         target_dir.mkdir(parents=True, exist_ok=True)
 
-        library = Library(source_path="libgirepository-1.0.1.dylib")
+        library = Library(source_path=Path("libgirepository-1.0.1.dylib"))
         library.install(bundle_dir, source_dir)
 
         for source_path in Path(source_dir / "share" / "gir-1.0").glob("*.gir"):

@@ -15,15 +15,14 @@ log = logging.getLogger("library")
 
 
 class Library(BaseXmlModel):
-    source_path: str
+    source_path: Path
 
     @field_validator("source_path")
-    def ensure_relative_path(cls, value: str) -> str:
-        path = Path(value)
-        if path.is_absolute():
-            return cls.path_relative_to(path, "lib").as_posix()
-        elif LinkedObject.is_relative_path(path):
-            return f"{path.name}"
+    def ensure_relative_path(cls, value: Path) -> Path:
+        if value.is_absolute():
+            return cls.path_relative_to(value, "lib")
+        elif LinkedObject.is_relative_path(value):
+            return Path(value.name)
         else:
             return value
 
@@ -37,7 +36,7 @@ class Library(BaseXmlModel):
 
     @property
     def is_framework(self) -> bool:
-        return ".framework/" in self.source_path
+        return any(".framework" in part for part in self.source_path.parts)
 
     def install(self, bundle_dir: Path, install_prefix: Path, flatten: bool = False):
         target_dir = bundle_dir / "Contents" / "Frameworks"
@@ -45,9 +44,9 @@ class Library(BaseXmlModel):
             log.debug(f"creating {target_dir}")
             target_dir.mkdir(parents=True)
 
-        for source_path in (
-            install_prefix / "lib" / Path(self.source_path).parent
-        ).glob(Path(self.source_path).name):
+        for source_path in (install_prefix / "lib" / self.source_path.parent).glob(
+            self.source_path.name
+        ):
             if source_path.exists():
                 if flatten:
                     target_path = target_dir / source_path.name
@@ -68,7 +67,7 @@ class Library(BaseXmlModel):
                     for path in linked_object.flattened_dependency_tree(
                         exclude_system=True
                     ):
-                        library = Library(source_path=path.as_posix())
+                        library = Library(source_path=path)
                         if library.is_framework:
                             # frameworks are taken care of separately
                             log.debug(

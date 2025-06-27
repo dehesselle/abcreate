@@ -13,9 +13,9 @@ log = logging.getLogger("resource")
 
 
 class Resource(BaseXmlModel):
-    target_path: Optional[str] = attr(default=None)
+    target_path: Optional[Path] = attr(default=None)
     chmod: Optional[str] = attr(default=None)
-    source_path: str
+    source_path: Path
 
     @classmethod
     def path_relative_to(cls, path: Path, part: str) -> str:
@@ -28,8 +28,8 @@ class Resource(BaseXmlModel):
     def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "Resources"
 
-        for source_path in (install_prefix / Path(self.source_path).parent).glob(
-            Path(self.source_path).name
+        for source_path in (install_prefix / self.source_path.parent).glob(
+            self.source_path.name
         ):
             if source_path.exists():
                 if self.target_path:

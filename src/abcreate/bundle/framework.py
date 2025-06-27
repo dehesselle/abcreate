@@ -12,7 +12,7 @@ log = logging.getLogger("framework")
 
 
 class Framework(BaseXmlModel):
-    source_path: str
+    source_path: Path
 
     def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "Frameworks"
@@ -22,7 +22,7 @@ class Framework(BaseXmlModel):
             target_dir.mkdir(parents=True)
 
         if (source_path := install_prefix / self.source_path).exists():
-            target_path = target_dir / Path(self.source_path).name
+            target_path = target_dir / self.source_path.name
             if target_path.exists():
                 log.error(f"will not overwrite {target_path}")
             else:

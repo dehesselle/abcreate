@@ -17,13 +17,13 @@ class Gtk3(BaseXmlModel):
     def install(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents" / "Frameworks"
 
-        library = Library(source_path="libgtk-3.0.dylib")
+        library = Library(source_path=Path("libgtk-3.0.dylib"))
         library.install(bundle_dir, source_dir)
 
         for source_path in Path(
             source_dir / "lib" / "gtk-3.0" / "3.0.0" / "immodules"
         ).glob("*.so"):
-            library = Library(source_path=source_path.as_posix())
+            library = Library(source_path=source_path)
             # Why flatten? We need to get rid of the subdirectories as e.g.
             # "3.0.0" in a path does not pass validation when signing.
             library.install(bundle_dir, source_dir, flatten=True)
@@ -31,7 +31,7 @@ class Gtk3(BaseXmlModel):
         for source_path in Path(
             source_dir / "lib" / "gtk-3.0" / "3.0.0" / "printbackends"
         ).glob("*.so"):
-            library = Library(source_path=source_path.as_posix())
+            library = Library(source_path=source_path)
             # Why flatten? We need to get rid of the subdirectories as e.g.
             # "3.0.0" in a path does not pass validation when signing.
             library.install(bundle_dir, source_dir, flatten=True)

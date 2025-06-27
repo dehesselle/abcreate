@@ -16,15 +16,12 @@ log = logging.getLogger("executable")
 
 
 class Executable(BaseXmlModel):
-    name: Optional[str] = attr(default=None)
-    source_path: str
+    name: Optional[Path] = attr(default=None)
+    source_path: Path
 
     @property
     def target_name(self) -> str:
-        if self.name:
-            return self.name
-        else:
-            return Path(self.source_path).name
+        return (self.name or self.source_path).name
 
     def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "MacOS"
@@ -47,7 +44,7 @@ class Executable(BaseXmlModel):
                 for path in linked_object.flattened_dependency_tree(
                     exclude_system=True
                 ):
-                    library = Library(source_path=path.as_posix())
+                    library = Library(source_path=path)
                     if library.is_framework:
                         # frameworks are taken care of separately
                         log.debug(

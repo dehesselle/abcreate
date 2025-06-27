@@ -12,7 +12,7 @@ log = logging.getLogger("icon")
 
 
 class Icon(BaseXmlModel):
-    source_path: str
+    source_path: Path
 
     def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "Resources"
