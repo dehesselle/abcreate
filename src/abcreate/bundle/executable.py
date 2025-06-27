@@ -40,11 +40,13 @@ class Executable(BaseXmlModel):
                 copy(source_path, target_path)
 
                 # pull in dependencies
-                lo = LinkedObject(source_path)
-                if not lo.rpaths:
+                linked_object = LinkedObject(source_path)
+                if not linked_object.rpaths:
                     log.debug(f"assuming lib as default rpath for {source_path}")
-                    lo.resolved_rpaths.add(source_dir / "lib")
-                for path in lo.flattened_dependency_tree(exclude_system=True):
+                    linked_object.resolved_rpaths.add(install_prefix / "lib")
+                for path in linked_object.flattened_dependency_tree(
+                    exclude_system=True
+                ):
                     library = Library(source_path=path.as_posix())
                     if library.is_framework:
                         # frameworks are taken care of separately
@@ -57,14 +59,14 @@ class Executable(BaseXmlModel):
 
                 # adjust install names: top level...
                 frameworks_dir = bundle_dir / "Contents" / "Frameworks"
-                lo = LinkedObject(target_path)
-                lo.change_dependent_install_names(
+                linked_object = LinkedObject(target_path)
+                linked_object.change_dependent_install_names(
                     "@executable_path/../Frameworks",
                     frameworks_dir.as_posix(),
                 )
                 # ...and one nesting level
                 for sub_dir in filter(Path.is_dir, frameworks_dir.iterdir()):
-                    lo.change_dependent_install_names(
+                    linked_object.change_dependent_install_names(
                         f"@executable_path/../Frameworks/{sub_dir.name}",
                         sub_dir.as_posix(),
                     )

@@ -64,8 +64,10 @@ class Library(BaseXmlModel):
                     copy(source_path, target_path)
 
                     # pull in dependencies
-                    lo = LinkedObject(source_path)
-                    for path in lo.flattened_dependency_tree(exclude_system=True):
+                    linked_object = LinkedObject(source_path)
+                    for path in linked_object.flattened_dependency_tree(
+                        exclude_system=True
+                    ):
                         library = Library(source_path=path.as_posix())
                         if library.is_framework:
                             # frameworks are taken care of separately
@@ -76,7 +78,7 @@ class Library(BaseXmlModel):
                             library.install(bundle_dir, install_prefix)
 
                     # adjust install names
-                    lo = LinkedObject(target_path)
+                    linked_object = LinkedObject(target_path)
                     loader_path = Path("@loader_path")
                     if not flatten:
                         # take care of nested directory structure
@@ -84,7 +86,7 @@ class Library(BaseXmlModel):
                             len(self.path_relative_to(source_path, "lib").parts) - 1
                         ):
                             loader_path /= ".."
-                    lo.change_dependent_install_names(
+                    linked_object.change_dependent_install_names(
                         loader_path.as_posix(), target_dir.as_posix()
                     )
             else:
