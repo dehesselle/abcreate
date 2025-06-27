@@ -29,4 +29,4 @@ class Executables(BaseXmlModel):
         for executable in self.executables:
             executable.install(bundle_dir, install_prefix)
 
-        Plist(source_path=None).CFBundleExecutable = self.main_executable.target_name
+        Plist().CFBundleExecutable = self.main_executable.target_name
