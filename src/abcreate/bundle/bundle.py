@@ -12,7 +12,7 @@ from pydantic_xml import BaseXmlModel, element
 
 from .executables import Executables
 from .frameworks import Frameworks
-from .gtk import GdkPixbuf, Gir, Gtk3, Gtk4
+from .gtk import GdkPixbuf, Glib, Gir, Gtk3, Gtk4
 from .icons import Icons
 from .libraries import Libraries
 from .locales import Locales
@@ -29,6 +29,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     frameworks: Optional[Frameworks] = element(default=None)
     gdkpixbuf: GdkPixbuf
     gir: Gir
+    glib: Glib
     gtk3: Optional[Gtk3] = element(default=None)
     gtk4: Optional[Gtk4] = element(default=None)
     icons: Icons
@@ -55,37 +56,36 @@ class Bundle(BaseXmlModel, tag="bundle"):
         log.info(f"creating {bundle_dir.as_posix()}")
         bundle_dir.mkdir(parents=True)
 
-        # order is on purpose:
-        #   - plist first because others will modify it
-        #   - libraries
-        #   - executables
-        #   -  resources
-        log.info("stage: plist")
+        # It's important to install the plist first because others might
+        # depend on it. (There is no dependency management.)
+        log.info("---       plist ---")
         self.plist.install(bundle_dir, install_prefix)
+        log.info("---        glib ---")
+        self.glib.install(bundle_dir, install_prefix)
         if self.gtk3:
-            log.info("stage: gtk3")
+            log.info("---        gtk3 ---")
             self.gtk3.install(bundle_dir, install_prefix)
         if self.gtk4:
-            log.info("stage: gtk4")
+            log.info("---        gtk4 ---")
             self.gtk4.install(bundle_dir, install_prefix)
-        log.info("stage: gdkpixpuf")
+        log.info("---   gdkpixbuf ---")
         self.gdkpixbuf.install(bundle_dir, install_prefix)
-        log.info("stage: gir")
+        log.info("---         gir ---")
         self.gir.install(bundle_dir, install_prefix)
         if self.libraries:
-            log.info("stage: libraries")
+            log.info("---   libraries ---")
             self.libraries.install(bundle_dir, install_prefix)
         if self.frameworks:
-            log.info("stage: frameworks")
+            log.info("---  frameworks ---")
             self.frameworks.install(bundle_dir, install_prefix)
-        log.info("stage: executables")
+        log.info("--- executables ---")
         self.executables.install(bundle_dir, install_prefix)
-        log.info("stage: icons")
+        log.info("---       icons ---")
         self.icons.install(bundle_dir, install_prefix)
-        log.info("stage: locales")
+        log.info("---     locales ---")
         self.locales.install(bundle_dir, install_prefix)
-        log.info("stage: resources")
+        log.info("---   resources ---")
         self.resources.install(bundle_dir, install_prefix)
         if self.symlinks:
-            log.info("stage: symlinks")
+            log.info("---    symlinks ---")
             self.symlinks.install(bundle_dir)

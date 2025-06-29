@@ -15,6 +15,7 @@
   </frameworks>
   <gdkpixbuf/>
   <gir command="jhb run g-ir-compiler" lib_dir="@rpath"/>
+  <glib/>
   <gtk4/>
   <icons>
     <icon>tmp/Inkscape.icns</icon>

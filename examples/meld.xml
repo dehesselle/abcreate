@@ -9,6 +9,7 @@
   </frameworks>
   <gdkpixbuf/>
   <gir command="jhb run g-ir-compiler"/>
+  <glib/>
   <gtk3/>
   <icons>
     <icon>tmp/Meld.icns</icon>
