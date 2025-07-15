@@ -8,25 +8,19 @@ from shutil import copy
 
 from pydantic_xml import BaseXmlModel
 
+from abcreate.util import path_relative_to
+
 log = logging.getLogger("locale")
 
 
 class Locale(BaseXmlModel):
     name: str
 
-    @classmethod
-    def path_relative_to(cls, path: Path, part: str) -> str:
-        try:
-            index = path.parts.index(part)
-            return "/".join(path.parts[index + 1 :])
-        except ValueError:
-            return path
-
     def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "Resources" / "share" / "locale"
 
         for source_path in Path(install_prefix / "share" / "locale").rglob(self.name):
-            target_path = target_dir / self.path_relative_to(source_path, "locale")
+            target_path = target_dir / path_relative_to(source_path, "locale")
             if target_path.exists():
                 log.debug(f"will not overwrite {target_path}")
             else:

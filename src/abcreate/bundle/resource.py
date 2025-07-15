@@ -9,6 +9,8 @@ from shutil import copy, copytree
 
 from pydantic_xml import BaseXmlModel, attr
 
+from abcreate.util import path_relative_to
+
 log = logging.getLogger("resource")
 
 
@@ -16,14 +18,6 @@ class Resource(BaseXmlModel):
     target_path: Optional[Path] = attr(default=None)
     chmod: Optional[str] = attr(default=None)
     source_path: Path
-
-    @classmethod
-    def path_relative_to(cls, path: Path, part: str) -> str:
-        try:
-            index = path.parts.index(part)
-            return "/".join(path.parts[index:])
-        except ValueError:
-            return path
 
     def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "Resources"
@@ -49,8 +43,8 @@ class Resource(BaseXmlModel):
                     #                                       |                       |
                     #                                       +-----------------------+
                     #                           This is where we cut off source_path.
-                    target_path = target_dir / self.path_relative_to(
-                        source_path, Path(self.source_path).parts[0]
+                    target_path = target_dir / path_relative_to(
+                        source_path, Path(self.source_path).parts[0], include_part=True
                     )
                 if target_path.exists():
                     log.debug(f"will not overwrite {target_path}")

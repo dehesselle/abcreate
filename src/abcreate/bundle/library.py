@@ -9,7 +9,8 @@ from shutil import copy
 from pydantic_xml import BaseXmlModel
 from pydantic import field_validator
 
-from abcreate.util import LinkedObject
+from abcreate.util import LinkedObject, path_relative_to
+
 
 log = logging.getLogger("library")
 
@@ -20,19 +21,11 @@ class Library(BaseXmlModel):
     @field_validator("source_path")
     def ensure_relative_path(cls, value: Path) -> Path:
         if value.is_absolute():
-            return cls.path_relative_to(value, "lib")
+            return path_relative_to(value, "lib")
         elif LinkedObject.is_relative_path(value):
             return Path(value.name)
         else:
             return value
-
-    @classmethod
-    def path_relative_to(cls, path: Path, part: str) -> Path:
-        try:
-            index = path.parts.index(part)
-            return Path(*list((path.parts[index + 1 :])))
-        except ValueError:
-            return path
 
     @property
     def is_framework(self) -> bool:
@@ -51,7 +44,7 @@ class Library(BaseXmlModel):
                 if flatten:
                     target_path = target_dir / source_path.name
                 else:
-                    target_path = target_dir / self.path_relative_to(source_path, "lib")
+                    target_path = target_dir / path_relative_to(source_path, "lib")
                 if target_path.exists():
                     log.debug(f"will not overwrite {target_path}")
                 else:
@@ -82,11 +75,11 @@ class Library(BaseXmlModel):
                     if not flatten:
                         # take care of nested directory structure
                         for _ in range(
-                            len(self.path_relative_to(source_path, "lib").parts) - 1
+                            len(path_relative_to(source_path, "lib").parts) - 1
                         ):
                             loader_path /= ".."
                     linked_object.change_dependent_install_names(
-                        loader_path.as_posix(), target_dir.as_posix()
+                        loader_path, target_dir
                     )
             else:
                 log.error(f"cannot locate {self.source_path}")

@@ -58,14 +58,14 @@ class Executable(BaseXmlModel):
                 frameworks_dir = bundle_dir / "Contents" / "Frameworks"
                 linked_object = LinkedObject(target_path)
                 linked_object.change_dependent_install_names(
-                    "@executable_path/../Frameworks",
-                    frameworks_dir.as_posix(),
+                    Path("@executable_path/../Frameworks"),
+                    frameworks_dir,
                 )
                 # ...and one nesting level
                 for sub_dir in filter(Path.is_dir, frameworks_dir.iterdir()):
                     linked_object.change_dependent_install_names(
-                        f"@executable_path/../Frameworks/{sub_dir.name}",
-                        sub_dir.as_posix(),
+                        Path("@executable_path/../Frameworks") / sub_dir.name,
+                        sub_dir,
                     )
         else:
             log.error(f"cannot locate {self.source_path}")

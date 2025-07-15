@@ -10,6 +10,8 @@ import shlex
 import re
 import logging
 
+from .path import path_relative_to
+
 log = logging.getLogger("linkedobj")
 
 
@@ -144,15 +146,20 @@ class LinkedObject:
         if libs := [l for l in self.depends_on() if Path(install_name).name in l]:
             self._install_name_tool(f"-change {libs[0]} {install_name}")
 
-    def change_dependent_install_names(self, install_name: str, lib_dir: str):
-        libs_in_lib_dir = [
-            l for l in Path(lib_dir).glob("*.dylib") if not l.is_symlink()
-        ]
+    def change_dependent_install_names(self, install_name: Path, lib_dir: Path):
+        # Create a list of of all libraries below lib_dir (recursively),
+        # excluding frameworks.
+        libraries = list()
+        for directory in lib_dir.iterdir():
+            if directory.suffix != ".framework":
+                libraries.extend(directory.glob("*.[dylib so]*"))
 
-        for lib in self.depends_on():
-            if Path(lib).name in [Path(l).name for l in libs_in_lib_dir]:
+        for library in self.depends_on():
+            if library.name in [_.name for _ in libraries]:
                 self._install_name_tool(
-                    f"-change {lib} {Path(install_name)/Path(lib).name}"
+                    "-change {} {}".format(
+                        library, install_name / path_relative_to(library, "lib")
+                    )
                 )
 
     def clear_rpath(self):
