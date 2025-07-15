@@ -40,7 +40,7 @@ class Executable(BaseXmlModel):
                 linked_object = LinkedObject(source_path)
                 if not linked_object.rpaths:
                     log.debug(f"assuming lib as default rpath for {source_path}")
-                    linked_object.resolved_rpaths.add(install_prefix / "lib")
+                    linked_object.resolved_rpaths[install_prefix / "lib"] = None
                 for path in linked_object.flattened_dependency_tree(
                     exclude_system=True
                 ):
@@ -54,18 +54,12 @@ class Executable(BaseXmlModel):
                     else:
                         library.install(bundle_dir, install_prefix)
 
-                # adjust install names: top level...
+                # adjust install names
                 frameworks_dir = bundle_dir / "Contents" / "Frameworks"
                 linked_object = LinkedObject(target_path)
                 linked_object.change_dependent_install_names(
                     Path("@executable_path/../Frameworks"),
                     frameworks_dir,
                 )
-                # ...and one nesting level
-                for sub_dir in filter(Path.is_dir, frameworks_dir.iterdir()):
-                    linked_object.change_dependent_install_names(
-                        Path("@executable_path/../Frameworks") / sub_dir.name,
-                        sub_dir,
-                    )
         else:
             log.error(f"cannot locate {self.source_path}")

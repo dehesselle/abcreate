@@ -22,7 +22,8 @@ class Locale(BaseXmlModel):
         for source_path in Path(install_prefix / "share" / "locale").rglob(self.name):
             target_path = target_dir / path_relative_to(source_path, "locale")
             if target_path.exists():
-                log.debug(f"will not overwrite {target_path}")
+                pass
+                # log.debug(f"will not overwrite {target_path}")
             else:
                 log.debug(f"copy {source_path} to {target_path}")
                 target_path.parent.mkdir(parents=True, exist_ok=True)

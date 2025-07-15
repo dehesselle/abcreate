@@ -18,15 +18,6 @@ log = logging.getLogger("library")
 class Library(BaseXmlModel):
     source_path: Path
 
-    @field_validator("source_path")
-    def ensure_relative_path(cls, value: Path) -> Path:
-        if value.is_absolute():
-            return path_relative_to(value, "lib")
-        elif LinkedObject.is_relative_path(value):
-            return Path(value.name)
-        else:
-            return value
-
     @property
     def is_framework(self) -> bool:
         return any(".framework" in part for part in self.source_path.parts)
@@ -46,7 +37,8 @@ class Library(BaseXmlModel):
                 else:
                     target_path = target_dir / path_relative_to(source_path, "lib")
                 if target_path.exists():
-                    log.debug(f"will not overwrite {target_path}")
+                    pass
+                    # log.debug(f"will not overwrite {target_path}")
                 else:
                     if not target_path.parent.exists():
                         # for subdirectories in the libraries directory

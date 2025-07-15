@@ -4,7 +4,7 @@
 
 from enum import Enum
 from pathlib import Path
-from typing import List, Set
+from typing import List, Dict
 import subprocess
 import shlex
 import re
@@ -25,7 +25,7 @@ class LinkedObject:
         LOADER_PATH = "@loader_path"
         RPATH = "@rpath"
 
-    resolved_rpaths: Set[Path] = set()
+    resolved_rpaths: Dict[Path, None] = dict()  # "ordered set" replacement
 
     @classmethod
     def is_framework(cls, path: Path) -> bool:
@@ -51,14 +51,14 @@ class LinkedObject:
         # TODO: This depends on being populated before we encounter the first lib
         # that uses rpath.
         if not LinkedObject.is_relative_path(self.path):
-            self._resolve_rpaths()
+            self._populate_resolved_rpaths()
 
     def _make_absolute(self, path: Path) -> Path:
         if LinkedObject.is_relative_path(path) and not LinkedObject.is_framework(path):
             if LinkedObject.is_relative_path(
                 path, LinkedObject.RelativeLinkPath.RPATH.value
             ):
-                for rpath in self.resolved_rpaths:
+                for rpath in self.resolved_rpaths.keys():
                     potential_path = rpath / "/".join(path.parts[1:])
                     if potential_path.is_file():
                         return potential_path
@@ -132,12 +132,15 @@ class LinkedObject:
                     result.append(Path(match.group(1)))
         return result
 
-    def _resolve_rpaths(self) -> None:
+    def _populate_resolved_rpaths(self) -> None:
         for rpath in self.rpaths:
-            if rpath.parts[0] in (LinkedObject.RelativeLinkPath.LOADER_PATH.value,):
-                LinkedObject.resolved_rpaths.add(
+            if rpath.parts[0] in (
+                LinkedObject.RelativeLinkPath.LOADER_PATH.value,
+                LinkedObject.RelativeLinkPath.EXECUTABLE_PATH.value,
+            ):
+                LinkedObject.resolved_rpaths[
                     (self.path.parent / "/".join(rpath.parts[1:])).resolve()
-                )
+                ] = None
 
     def add_rpath(self, rpath: str):
         self._install_name_tool(f"-add_rpath {rpath}")
@@ -147,18 +150,24 @@ class LinkedObject:
             self._install_name_tool(f"-change {libs[0]} {install_name}")
 
     def change_dependent_install_names(self, install_name: Path, lib_dir: Path):
-        # Create a list of of all libraries below lib_dir (recursively),
-        # excluding frameworks.
+        # Create a list of of all libraries in lib_dir and in the first level
+        # of subdirectories (excluding frameworks).
         libraries = list()
-        for directory in lib_dir.iterdir():
-            if directory.suffix != ".framework":
-                libraries.extend(directory.glob("*.[dylib so]*"))
+        libraries.extend(lib_dir.glob("*.[dylib so]*"))
+        for path in lib_dir.iterdir():
+            if path.is_dir() and path.suffix != ".framework":
+                libraries.extend(path.glob("*.[dylib so]*"))
 
-        for library in self.depends_on():
-            if library.name in [_.name for _ in libraries]:
+        # Match the libraries that self depends on to that list above and
+        # change install name accordingly.
+        for dependent_library in self.depends_on():
+            if matched_library := next(
+                (_ for _ in libraries if dependent_library.name in _.name), None
+            ):
                 self._install_name_tool(
                     "-change {} {}".format(
-                        library, install_name / path_relative_to(library, "lib")
+                        dependent_library,
+                        install_name / path_relative_to(matched_library, "Frameworks"),
                     )
                 )
 
