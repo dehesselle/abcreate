@@ -18,14 +18,12 @@ from .libraries import Libraries
 from .locales import Locales
 from .plist import Plist
 from .resources import Resources
-from .symlinks import Symlinks
 
 log = logging.getLogger("bundle")
 
 
 class Bundle(BaseXmlModel, tag="bundle"):
     executables: Executables
-    symlinks: Optional[Symlinks] = element(default=None)
     frameworks: Optional[Frameworks] = element(default=None)
     gdkpixbuf: GdkPixbuf
     gir: Gir
@@ -86,6 +84,3 @@ class Bundle(BaseXmlModel, tag="bundle"):
         self.locales.install(bundle_dir, install_prefix)
         log.info("--- {:>11} ---".format("resources"))
         self.resources.install(bundle_dir, install_prefix)
-        if self.symlinks:
-            log.info("--- {:>11} ---".format("symlinks"))
-            self.symlinks.install(bundle_dir)

@@ -4,11 +4,12 @@
 
 import logging
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from pydantic_xml import BaseXmlModel, element
 
 from .executable import Executable
+from .symlink import Symlink
 from .plist import Plist
 
 log = logging.getLogger("executable")
@@ -16,6 +17,7 @@ log = logging.getLogger("executable")
 
 class Executables(BaseXmlModel):
     executables: List[Executable] = element(tag="executable")
+    symlinks: Optional[List[Symlink]] = element(tag="symlink", default=list())
 
     @property
     def main_executable(self) -> Executable:
@@ -30,3 +32,6 @@ class Executables(BaseXmlModel):
             executable.install(bundle_dir, install_prefix)
 
         Plist().CFBundleExecutable = self.main_executable.target_name
+
+        for symlink in self.symlinks:
+            symlink.install(bundle_dir)
