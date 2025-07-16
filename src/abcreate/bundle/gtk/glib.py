@@ -8,6 +8,7 @@ from pathlib import Path
 from pydantic_xml import BaseXmlModel
 
 from abcreate.bundle.library import Library
+from abcreate.bundle.resource import Resource
 
 log = logging.getLogger("glib")
 
@@ -23,3 +24,6 @@ class Glib(BaseXmlModel):
             # directory (it will try to load everything in there, throwing warning
             # for libraries which are not GIO modules).
             library.install(bundle_dir, source_dir)
+
+        resource = Resource(source_path=Path("share/glib-2.0"))
+        resource.install(bundle_dir, source_dir)

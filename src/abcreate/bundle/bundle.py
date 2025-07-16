@@ -12,7 +12,7 @@ from pydantic_xml import BaseXmlModel, element
 
 from .executables import Executables
 from .frameworks import Frameworks
-from .gtk import GdkPixbuf, Glib, Gir, Gtk3, Gtk4
+from .gtk import Gir, Gtk3, Gtk4
 from .icons import Icons
 from .libraries import Libraries
 from .locales import Locales
@@ -25,9 +25,7 @@ log = logging.getLogger("bundle")
 class Bundle(BaseXmlModel, tag="bundle"):
     executables: Executables
     frameworks: Optional[Frameworks] = element(default=None)
-    gdkpixbuf: GdkPixbuf
     gir: Gir
-    glib: Glib
     gtk3: Optional[Gtk3] = element(default=None)
     gtk4: Optional[Gtk4] = element(default=None)
     icons: Icons
@@ -58,16 +56,12 @@ class Bundle(BaseXmlModel, tag="bundle"):
         # depend on it. (There is no dependency management.)
         log.info("--- {:>11} ---".format("plist"))
         self.plist.install(bundle_dir, install_prefix)
-        log.info("--- {:>11} ---".format("glib"))
-        self.glib.install(bundle_dir, install_prefix)
         if self.gtk3:
             log.info("--- {:>11} ---".format("gtk3"))
             self.gtk3.install(bundle_dir, install_prefix)
         if self.gtk4:
             log.info("--- {:>11} ---".format("gtk4"))
             self.gtk4.install(bundle_dir, install_prefix)
-        log.info("--- {:>11} ---".format("gdkpixbuf"))
-        self.gdkpixbuf.install(bundle_dir, install_prefix)
         log.info("--- {:>11} ---".format("gir"))
         self.gir.install(bundle_dir, install_prefix)
         if self.libraries:
