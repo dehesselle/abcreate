@@ -48,10 +48,7 @@ class LinkedObject:
 
     def __init__(self, path: Path):
         self.path = path
-        # TODO: This depends on being populated before we encounter the first lib
-        # that uses rpath.
-        if not LinkedObject.is_relative_path(self.path):
-            self._populate_resolved_rpaths()
+        self.populate_resolved_rpaths()
 
     def _make_absolute(self, path: Path) -> Path:
         if LinkedObject.is_relative_path(path) and not LinkedObject.is_framework(path):
@@ -132,7 +129,7 @@ class LinkedObject:
                     result.append(Path(match.group(1)))
         return result
 
-    def _populate_resolved_rpaths(self) -> None:
+    def populate_resolved_rpaths(self) -> None:
         for rpath in self.rpaths:
             if rpath.parts[0] in (
                 LinkedObject.RelativeLinkPath.LOADER_PATH.value,

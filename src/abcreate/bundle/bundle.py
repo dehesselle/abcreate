@@ -56,6 +56,8 @@ class Bundle(BaseXmlModel, tag="bundle"):
         # depend on it. (There is no dependency management.)
         log.info("--- {:>11} ---".format("plist"))
         self.plist.install(bundle_dir, install_prefix)
+        log.info("--- {:>11} ---".format("executables"))
+        self.executables.install(bundle_dir, install_prefix)
         if self.gtk3:
             log.info("--- {:>11} ---".format("gtk3"))
             self.gtk3.install(bundle_dir, install_prefix)
@@ -70,8 +72,6 @@ class Bundle(BaseXmlModel, tag="bundle"):
         if self.frameworks:
             log.info("--- {:>11} ---".format("frameworks"))
             self.frameworks.install(bundle_dir, install_prefix)
-        log.info("--- {:>11} ---".format("executables"))
-        self.executables.install(bundle_dir, install_prefix)
         log.info("--- {:>11} ---".format("icons"))
         self.icons.install(bundle_dir, install_prefix)
         log.info("--- {:>11} ---".format("locales"))
