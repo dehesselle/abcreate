@@ -6,11 +6,15 @@ At the moment, the scope of this project is very limited. As hinted at in the [R
 
 While I'm doing this for myself, I'm too lazy to create short-lived feature branches, I use `develop` for this instead. Despite it being a public and permanent branch, I treat it like a feature branch, i.e. I rebase and mess with the history there all the time.
 
-Only the `main` branch is to be considered "safe territory" where I don't mess around. PR's should always target the `main` branch.
+Only the `main` branch is to be considered "safe territory" where I don't mess around. PRs should always target the `main` branch.
 
 ## Versioning
 
 This project uses [semantic versioning](https://semver.org) and will stay at a `0.x` version for a long time (or even forever).
+
+## Commits
+
+[The seven rules of great Git commit messages](https://cbea.ms/git-commit/#seven-rules).
 
 ## Releases
 
