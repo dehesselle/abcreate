@@ -24,6 +24,7 @@ class Plist(BaseXmlModel):
     class Key(Enum):
         CFBUNDLEEXECUTABLE = "CFBundleExecutable"
         CFBUNDLEICONFILE = "CFBundleIconFile"
+        CFBUNDLEICONNAME = "CFBundleIconName"
         CFBUNDLELOCALIZATIONS = "CFBundleLocalizations"
 
     def install(self, bundle_dir: Path, install_prefix: Path):
@@ -76,6 +77,14 @@ class Plist(BaseXmlModel):
     @CFBundleIconFile.setter
     def CFBundleIconFile(self, value):
         self._write(self.Key.CFBUNDLEICONFILE.value, value)
+
+    @property
+    def CFBundleIconName(self) -> str:
+        return self._read(self.Key.CFBUNDLEICONNAME.value)
+
+    @CFBundleIconName.setter
+    def CFBundleIconName(self, value):
+        self._write(self.Key.CFBUNDLEICONNAME.value, value)
 
     @property
     def CFBundleLocalizations(self):

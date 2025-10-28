@@ -14,7 +14,14 @@ log = logging.getLogger("icon")
 class Icon(BaseXmlModel):
     source_path: Path
 
+    @property
+    def is_liquid_glass(self) -> bool:
+        return self.source_path.suffix.lower() == ".icon"
+
     def install(self, bundle_dir: Path, install_prefix: Path):
+        if self.is_liquid_glass:
+            raise ValueError("Liquid Glass icons cannot be installed individually")
+
         target_dir = bundle_dir / "Contents" / "Resources"
         target_dir.mkdir(parents=True, exist_ok=True)
 
