@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+import logging
+import re
+import shlex
+import subprocess
 from enum import Enum
 from pathlib import Path
-from typing import List, Dict
-import subprocess
-import shlex
-import re
-import logging
+from typing import Dict, List
 
 from .path import path_relative_to
 
@@ -123,9 +123,9 @@ class LinkedObject:
         result = list()
         line_iter = iter(self._otool("-l"))
         for line in line_iter:
-            if re.match("\s+cmd LC_RPATH", line):
+            if re.match(r"\s+cmd LC_RPATH", line):
                 next(line_iter)
-                if match := re.match("\s+path (.+) \(offset.+", next(line_iter)):
+                if match := re.match(r"\s+path (.+) \(offset.+", next(line_iter)):
                     result.append(Path(match.group(1)))
         return result
 
@@ -183,7 +183,7 @@ class LinkedObject:
                 # This matches only dylibs:
                 # match = re.match("\t(.+\.dylib)", line)
                 # This will match everything:
-                if match := re.match("\t(.+) \(compatibility", line):
+                if match := re.match(r"\t(.+) \(compatibility", line):
                     library = Path(match.group(1))
                     if exclude_system:
                         if not LinkedObject.is_system_path(library):
