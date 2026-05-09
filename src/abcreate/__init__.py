@@ -2,18 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-import logging
 import argparse
-from pathlib import Path
+import logging
 from enum import Enum
+from pathlib import Path
 
 from abcreate.bundle import Bundle
-from abcreate.util.log import setup_logging, logstats
-
-try:
-    from abcreate._version import version
-except ImportError:
-    version = "0.0.0"
+from abcreate.util.log import logstats, setup_logging
+from abcreate.util.version import VERSION
 
 log = logging.getLogger("main")
 
@@ -24,7 +20,7 @@ class Command(Enum):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="create an application bundle")
-    parser.add_argument("--version", action="version", version=f"abcreate {version}")
+    parser.add_argument("--version", action="version", version=f"abcreate {VERSION}")
     p_commands = parser.add_subparsers(help="available commands", dest="command")
 
     p_create = p_commands.add_parser(
@@ -50,7 +46,7 @@ def main() -> None:
 
     if args.command == Command.CREATE.value:
         setup_logging("abcreate.log")
-        log.info(f"abcreate {version}")
+        log.info(f"abcreate {VERSION}")
 
         try:
             xml_doc = args.file.read_text()

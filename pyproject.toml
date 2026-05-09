@@ -40,4 +40,4 @@ build-backend = "hatchling.build"
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/abcreate/_version.py"
+version-file = "src/abcreate/util/_version.py"
