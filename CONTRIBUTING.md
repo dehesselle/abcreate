@@ -27,4 +27,5 @@ A rolling release is created/updated on GitHub from every push to the `develop` 
 - Targeting Python >= 3.10.  
   _This will change in the near future to >=3.12!_
 - Using [uv](https://github.com/astral-sh/uv) for package management.
-- [Black](https://black.readthedocs.io/en/stable/) all they way.
+- Using [Ruff](https://docs.astral.sh/ruff/) for linting and formatting.
+- Set Pyright type checking to `standard`.
