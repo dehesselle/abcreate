@@ -4,7 +4,7 @@ At the moment, the scope of this project is very limited. As hinted at in the [R
 
 ## Branching
 
-While I'm doing this for myself, I'm too lazy to create short-lived feature branches, I use `develop` for this instead. Despite it being a public and permanent branch, I treat it like a feature branch, i.e. I rebase and mess with the history there all the time.
+I'm too lazy to create short-lived feature branches for myself, I use `develop` for this instead. Despite it being a public and permanent branch, I treat it like a feature branch, i.e. I rebase and mess with the history there all the time.
 
 Only the `main` branch is to be considered "safe territory" where I don't mess around. PRs should always target the `main` branch.
 
@@ -14,7 +14,7 @@ This project uses [semantic versioning](https://semver.org) and will stay at a `
 
 ## Commits
 
-[The seven rules of great Git commit messages](https://cbea.ms/git-commit/#seven-rules).
+Follow [the seven rules of great Git commit messages](https://cbea.ms/git-commit/#seven-rules).
 
 ## Releases
 
@@ -28,4 +28,8 @@ A rolling release is created/updated on GitHub from every push to the `develop` 
   _This will change in the near future to >=3.12!_
 - Using [uv](https://github.com/astral-sh/uv) for package management.
 - Using [Ruff](https://docs.astral.sh/ruff/) for linting and formatting.
-- Set Pyright type checking to `standard`.
+- Set Pyright type checking to [`standard`](https://microsoft.github.io/pyright/#/configuration?id=type-check-diagnostics-settings).
+
+## Generative AI / LLM usage
+
+Not acceptable in any way, shape or form.
