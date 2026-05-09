@@ -143,7 +143,9 @@ class LinkedObject:
         self._install_name_tool(f"-add_rpath {rpath}")
 
     def change_one_dependant_install_name(self, install_name: str):
-        if libs := [l for l in self.depends_on() if Path(install_name).name in l]:
+        if libs := [
+            lib for lib in self.depends_on() if Path(install_name).name in str(lib)
+        ]:
             self._install_name_tool(f"-change {libs[0]} {install_name}")
 
     def change_dependent_install_names(self, install_name: Path, lib_dir: Path):
