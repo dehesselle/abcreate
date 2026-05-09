@@ -3,14 +3,15 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import logging
-from pathlib import Path
 import re
+from pathlib import Path
 
 from pydantic_xml import BaseXmlModel
 
 from abcreate.bundle.library import Library
 from abcreate.bundle.locale import Locale
 from abcreate.bundle.resource import Resource
+
 from .gdkpixbuf import GdkPixbuf
 from .glib import Glib
 
@@ -19,8 +20,6 @@ log = logging.getLogger("gtk")
 
 class Gtk3(BaseXmlModel):
     def _install_frameworks(self, bundle_dir: Path, source_dir: Path):
-        target_dir = bundle_dir / "Contents" / "Frameworks"
-
         library = Library(source_path=Path("libgtk-3.0.dylib"))
         library.install(bundle_dir, source_dir)
 

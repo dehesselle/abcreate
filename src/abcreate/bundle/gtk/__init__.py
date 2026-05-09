@@ -7,3 +7,5 @@ from .gir import Gir
 from .glib import Glib
 from .gtk3 import Gtk3
 from .gtk4 import Gtk4
+
+__all__ = ["GdkPixbuf", "Gir", "Glib", "Gtk3", "Gtk4"]

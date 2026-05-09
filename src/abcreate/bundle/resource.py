@@ -4,12 +4,12 @@
 
 import logging
 from pathlib import Path
-from typing import Optional
 from shutil import copy, copytree
+from typing import Optional
 
 from pydantic_xml import BaseXmlModel, attr
 
-from abcreate.util import path_relative_to
+from abcreate.util.linkedobject import path_relative_to
 
 log = logging.getLogger("resource")
 

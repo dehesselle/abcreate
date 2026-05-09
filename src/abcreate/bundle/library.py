@@ -7,10 +7,8 @@ from pathlib import Path
 from shutil import copy
 
 from pydantic_xml import BaseXmlModel
-from pydantic import field_validator
 
-from abcreate.util import LinkedObject, path_relative_to
-
+from abcreate.util.linkedobject import LinkedObject, path_relative_to
 
 log = logging.getLogger("library")
 

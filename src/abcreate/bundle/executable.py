@@ -4,12 +4,13 @@
 
 import logging
 from pathlib import Path
-from typing import Optional
 from shutil import copy
+from typing import Optional
 
 from pydantic_xml import BaseXmlModel, attr
 
-from abcreate.util import LinkedObject
+from abcreate.util.linkedobject import LinkedObject
+
 from .library import Library
 
 log = logging.getLogger("executable")

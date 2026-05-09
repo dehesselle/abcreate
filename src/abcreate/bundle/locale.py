@@ -8,7 +8,7 @@ from shutil import copy
 
 from pydantic_xml import BaseXmlModel
 
-from abcreate.util import path_relative_to
+from abcreate.util.linkedobject import path_relative_to
 
 log = logging.getLogger("locale")
 

@@ -3,3 +3,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 from .bundle import Bundle
+
+__all__ = ["Bundle"]
