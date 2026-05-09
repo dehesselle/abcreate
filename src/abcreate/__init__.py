@@ -45,7 +45,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == Command.CREATE.value:
-        setup_logging("abcreate.log")
+        setup_logging(Path("abcreate.log"))
         log.info(f"abcreate {VERSION}")
 
         try:
