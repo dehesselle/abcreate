@@ -8,6 +8,7 @@ from typing import List
 
 from pydantic_xml import BaseXmlModel, element
 
+from .errors import BundleValidationError
 from .icon import Icon
 from .plist import Plist
 
@@ -22,8 +23,7 @@ class Icons(BaseXmlModel):
         try:
             return self.icons[0]
         except IndexError:
-            log.critical("no icons specified")
-            return None
+            raise BundleValidationError("no icons specified")
 
     def install(self, bundle_dir: Path, install_prefix: Path):
         for icon in self.icons:

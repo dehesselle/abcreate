@@ -19,14 +19,9 @@ class Command(Enum):
 
 def create_app(args: argparse.Namespace) -> None:
     log.info(f"abcreate {VERSION}")
-
-    try:
-        xml_doc = args.file.read_text()
-        bundle = Bundle.from_xml(xml_doc)
-    except Exception as e:
-        log.critical(e)
-    else:
-        bundle.create(args.output_dir, args.install_prefix)
+    xml_doc = args.file.read_text()
+    bundle = Bundle.from_xml(xml_doc)
+    bundle.create(args.output_dir, args.install_prefix)
 
 
 def setup_cli(parser: argparse.ArgumentParser) -> None:

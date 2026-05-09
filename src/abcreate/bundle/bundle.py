@@ -10,6 +10,7 @@ from typing import Optional
 from pydantic import model_validator
 from pydantic_xml import BaseXmlModel, element
 
+from .errors import BundleValidationError
 from .executables import Executables
 from .frameworks import Frameworks
 from .gtk import Gir, Gtk3, Gtk4
@@ -37,7 +38,7 @@ class Bundle(BaseXmlModel, tag="bundle"):
     @model_validator(mode="after")
     def ensure_gtk3_gtk4_mutually_exclusive(self):
         if (self.gtk3 and self.gtk4) or (not self.gtk3 and not self.gtk4):
-            log.critical("gtk3 and gtk4 are mutually exclusive")
+            raise BundleValidationError("gtk3 and gtk4 are mutually exclusive")
         return self
 
     def create(self, output_dir: Path, install_prefix: Path):

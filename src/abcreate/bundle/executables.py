@@ -8,9 +8,10 @@ from typing import List, Optional
 
 from pydantic_xml import BaseXmlModel, element
 
+from .errors import BundleValidationError
 from .executable import Executable
-from .symlink import Symlink
 from .plist import Plist
+from .symlink import Symlink
 
 log = logging.getLogger("executable")
 
@@ -24,8 +25,7 @@ class Executables(BaseXmlModel):
         try:
             return self.executables[0]
         except IndexError:
-            log.critical("no executables specified")
-            return None
+            raise BundleValidationError("no executables specified")
 
     def install(self, bundle_dir: Path, install_prefix: Path):
         for executable in self.executables:

@@ -2,15 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-from pathlib import Path
 import logging
 import os
-
-
-class ExitOnCriticalHandler(logging.StreamHandler):
-    def emit(self, record):
-        if record.levelno == logging.CRITICAL:
-            raise SystemExit(1)
+from pathlib import Path
 
 
 class CollectStatisticsHandler(logging.StreamHandler):
@@ -76,6 +70,5 @@ def setup_logging(logfile: Path) -> None:
             file_handler,
             stream_handler,
             logstats,
-            ExitOnCriticalHandler(),
         ],
     )
