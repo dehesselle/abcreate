@@ -197,14 +197,16 @@ class LinkedObject:
     def flattened_dependency_tree(
         self, exclude_system: bool = False, _dependencies=list()
     ) -> List[Path]:
-        for library in self.depends_on(exclude_system):
-            library = self._make_absolute(library)
-            if library not in _dependencies:
-                _dependencies.append(library)
-                for l in LinkedObject(library).flattened_dependency_tree(
+        for direct_dependency in self.depends_on(exclude_system):
+            direct_dependency = self._make_absolute(direct_dependency)
+            if direct_dependency not in _dependencies:
+                _dependencies.append(direct_dependency)
+                for transitive_dependency in LinkedObject(
+                    direct_dependency
+                ).flattened_dependency_tree(
                     exclude_system,
                     _dependencies,
                 ):
-                    if l not in _dependencies:
-                        _dependencies.append(l)
+                    if transitive_dependency not in _dependencies:
+                        _dependencies.append(transitive_dependency)
         return _dependencies
