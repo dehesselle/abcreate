@@ -171,7 +171,7 @@ class LinkedObject:
                 )
 
     def clear_rpath(self):
-        for rpath in self.rpath:
+        for rpath in self.rpaths:
             self._install_name_tool(f"-delete_rpath {rpath}")
 
     def depends_on(self, exclude_system: bool = False) -> List[Path]:
