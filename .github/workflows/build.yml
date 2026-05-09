@@ -14,21 +14,21 @@ jobs:
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Run Ruff
-        uses: astral-sh/ruff-action@v3
+        uses: astral-sh/ruff-action@v4.0.0
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v8.1.0
 
       - name: Build project
         run: uv build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/abcreate*.*
@@ -44,12 +44,12 @@ jobs:
     steps:
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist
 
       - name: Update prerelease
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         with:
           name: develop
           artifacts: abcreate*.*
@@ -72,12 +72,12 @@ jobs:
     steps:
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist
 
       - name: Create release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         with:
           artifacts: abcreate*.*
           draft: true
@@ -99,7 +99,7 @@ jobs:
     steps:
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist/
