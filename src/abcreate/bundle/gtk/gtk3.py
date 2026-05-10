@@ -50,7 +50,7 @@ class Gtk3(BaseXmlModel):
         target_path.parent.mkdir(parents=True, exist_ok=True)
         with open(target_path, "wt") as file:
             for line in immodules_cache.splitlines(keepends=True):
-                if match := re.match('".+(im-.+\.so)"', line):
+                if match := re.match(r'".+(im-.+\.so)"', line):
                     # TODO: this probably needs to be @rpath in cases where an app calls a bundled
                     # Python that needs to be able reach these
                     file.write(f'"@executable_path/../Frameworks/{match.group(1)}"\n')

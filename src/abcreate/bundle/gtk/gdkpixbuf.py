@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import logging
-from pathlib import Path
 import re
+from pathlib import Path
 
 from pydantic_xml import BaseXmlModel
 
@@ -37,7 +37,7 @@ class GdkPixbuf(BaseXmlModel):
         target_path.parent.mkdir(parents=True, exist_ok=True)
         with open(target_path, "wt") as file:
             for line in loaders_cache.splitlines(keepends=True):
-                if match := re.match('".+(libpixbufloader.+\.so)"', line):
+                if match := re.match(r'".+(libpixbufloader.+\.so)"', line):
                     file.write(f'"Frameworks/{match.group(1)}"\n')
                 else:
                     file.write(line)
