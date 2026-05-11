@@ -26,8 +26,7 @@ class Executable(BaseXmlModel):
 
     def install(self, bundle_dir: Path, install_prefix: Path):
         target_dir = bundle_dir / "Contents" / "MacOS"
-        if not target_dir.exists():
-            target_dir.mkdir(parents=True)
+        target_dir.mkdir(parents=True, exist_ok=True)
 
         if (source_path := install_prefix / "bin" / self.source_path).exists():
             target_path = target_dir / self.target_name
