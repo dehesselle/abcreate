@@ -5,7 +5,8 @@
 import logging
 from pathlib import Path
 from shutil import copy, copytree
-from typing import Optional
+from tempfile import NamedTemporaryFile
+from typing import Callable, List, Optional, Tuple
 
 from pydantic_xml import BaseXmlModel, attr
 
@@ -19,46 +20,68 @@ class Resource(BaseXmlModel):
     chmod: Optional[str] = attr(default=None)
     source_path: Path
 
-    def install(self, bundle_dir: Path, install_prefix: Path):
+    def _get_source_and_target(
+        self, bundle_dir: Path, install_prefix: Path
+    ) -> List[Tuple[Path, Path]]:
+        result = []
+
         target_dir = bundle_dir / "Contents" / "Resources"
 
         for source_path in (install_prefix / self.source_path.parent).glob(
             self.source_path.name
         ):
-            if source_path.exists():
-                if self.target_path:
-                    target_path = target_dir / self.target_path
-                else:
-                    # source_path
-                    #     a fully expanded path from self.source_path
-                    # self.source_path
-                    #     a path relative to source_dir, can contain globs
-                    #
-                    # Example:                   +----------------------------------+
-                    #                            |                                  |
-                    #                            v                                  |
-                    #   self.source_path   =   share/glib-2.0/*.txt                 |
-                    #   source_path        =   /some/path/share/glib-2.0/foo.txt    |
-                    #                                       ^                       |
-                    #                                       |                       |
-                    #                                       +-----------------------+
-                    #                           This is where we cut off source_path.
-                    target_path = target_dir / path_relative_to(
-                        source_path, Path(self.source_path).parts[0], include_part=True
-                    )
-                if target_path.exists():
-                    log.debug(f"will not overwrite {target_path}")
-                else:
-                    if not target_path.parent.exists():
-                        # for subdirectories
-                        target_path.parent.mkdir(parents=True)
-
-                    log.debug(f"copy {source_path} to {target_path}")
-                    if source_path.is_dir():
-                        copytree(source_path, target_path, symlinks=True)
-                    else:
-                        copy(source_path, target_path)
-                        if self.chmod:
-                            target_path.chmod(int(self.chmod, 8))
+            if self.target_path:
+                target_path = target_dir / self.target_path
             else:
-                log.error(f"cannot locate {self.source_path}")
+                # source_path
+                #     a fully expanded path from self.source_path
+                # self.source_path
+                #     a path relative to source_dir, can contain globs
+                #
+                # Example:                   +----------------------------------+
+                #                            |                                  |
+                #                            v                                  |
+                #   self.source_path   =   share/glib-2.0/*.txt                 |
+                #   source_path        =   /some/path/share/glib-2.0/foo.txt    |
+                #                                       ^                       |
+                #                                       |                       |
+                #                                       +-----------------------+
+                #                           This is where we cut off source_path.
+                target_path = target_dir / path_relative_to(
+                    source_path, Path(self.source_path).parts[0], include_part=True
+                )
+            if target_path.exists():
+                log.debug(f"will not overwrite {target_path}")
+            else:
+                if not target_path.parent.exists():
+                    # for subdirectories
+                    target_path.parent.mkdir(parents=True)
+
+                result.append((source_path, target_path))
+
+        return result
+
+    def install(
+        self,
+        bundle_dir: Path,
+        install_prefix: Path,
+        modify_func: Callable | None = None,
+    ):
+        for source_path, target_path in self._get_source_and_target(
+            bundle_dir, install_prefix
+        ):
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+
+            log.debug(f"copy {source_path} to {target_path}")
+            if source_path.is_dir():
+                copytree(source_path, target_path, symlinks=True)
+            else:
+                if modify_func:
+                    with NamedTemporaryFile(mode="wt") as modified_file:
+                        modify_func(source_path.read_text(), modified_file)
+                        modified_file.flush()
+                        copy(modified_file.name, target_path)
+                else:
+                    copy(source_path, target_path)
+                    if self.chmod:
+                        target_path.chmod(int(self.chmod, 8))

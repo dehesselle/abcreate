@@ -9,6 +9,7 @@ from pathlib import Path
 from pydantic_xml import BaseXmlModel
 
 from abcreate.bundle.library import Library
+from abcreate.bundle.resource import Resource
 
 log = logging.getLogger("gdkpixbuf")
 
@@ -25,22 +26,26 @@ class GdkPixbuf(BaseXmlModel):
             library.install(bundle_dir, source_dir, flatten=True)
 
     def _install_resources(self, bundle_dir: Path, source_dir: Path) -> None:
-        # pixbuf loaders: loaders.cache file
         target_dir = bundle_dir / "Contents" / "Resources"
-        source_path = Path(
-            source_dir / "lib" / "gdk-pixbuf-2.0" / "2.10.0" / "loaders.cache"
+
+        resource = Resource(
+            source_path=source_dir
+            / "lib"
+            / "gdk-pixbuf-2.0"
+            / "2.10.0"
+            / "loaders.cache",
+            target_path=target_dir / "etc" / "loaders.cache",
         )
-        loaders_cache = source_path.read_text()
-        # Since we're breaking up the original structure, best place for
-        # loaders.cache is etc as it is a configuration file after all.
-        target_path = target_dir / "etc" / "loaders.cache"
-        target_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(target_path, "wt") as file:
-            for line in loaders_cache.splitlines(keepends=True):
+
+        def modify_func(text, file) -> None:
+            # pixbuf loaders need to be picked up from Frameworks directory
+            for line in text.splitlines(keepends=True):
                 if match := re.match(r'".+(libpixbufloader.+\.so)"', line):
                     file.write(f'"Frameworks/{match.group(1)}"\n')
                 else:
                     file.write(line)
+
+        resource.install(bundle_dir, source_dir, modify_func=modify_func)
 
     def install(self, bundle_dir: Path, source_dir: Path):
         self._install_frameworks(bundle_dir, source_dir)

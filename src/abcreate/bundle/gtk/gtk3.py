@@ -46,20 +46,21 @@ class Gtk3(BaseXmlModel):
     def _install_resources(self, bundle_dir: Path, source_dir: Path):
         target_dir = bundle_dir / "Contents" / "Resources"
 
-        source_path = Path(source_dir / "lib" / "gtk-3.0" / "3.0.0" / "immodules.cache")
-        immodules_cache = source_path.read_text()
-        # Since we're breaking up the original structure, best place for
-        # loaders.cache is etc as it is a configuration file after all.
-        target_path = target_dir / "etc" / "immodules.cache"
-        target_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(target_path, "wt") as file:
-            for line in immodules_cache.splitlines(keepends=True):
+        resource = Resource(
+            source_path=source_dir / "lib" / "gtk-3.0" / "3.0.0" / "immodules.cache",
+            target_path=target_dir / "etc" / "immodules.cache",
+        )
+
+        def modify_func(text, file) -> None:
+            for line in text.splitlines(keepends=True):
                 if match := re.match(r'".+(im-.+\.so)"', line):
                     # TODO: this probably needs to be @rpath in cases where an app calls a bundled
                     # Python that needs to be able reach these
                     file.write(f'"@executable_path/../Frameworks/{match.group(1)}"\n')
                 else:
                     file.write(line)
+
+        resource.install(bundle_dir, source_dir, modify_func=modify_func)
 
         resource = Resource(source_path=Path("share/gtk-3.0"))
         resource.install(bundle_dir, source_dir)
