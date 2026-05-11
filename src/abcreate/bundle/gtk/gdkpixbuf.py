@@ -14,9 +14,8 @@ log = logging.getLogger("gdkpixbuf")
 
 
 class GdkPixbuf(BaseXmlModel):
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def _install_frameworks(self, bundle_dir: Path, source_dir: Path) -> None:
         # pixbuf loaders: *.so files
-        target_dir = bundle_dir / "Contents" / "Frameworks"
         for source_path in Path(
             source_dir / "lib" / "gdk-pixbuf-2.0" / "2.10.0" / "loaders"
         ).glob("*.so"):
@@ -25,6 +24,7 @@ class GdkPixbuf(BaseXmlModel):
             # "2.10.0" in a path does not pass validation when signing.
             library.install(bundle_dir, source_dir, flatten=True)
 
+    def _install_resources(self, bundle_dir: Path, source_dir: Path) -> None:
         # pixbuf loaders: loaders.cache file
         target_dir = bundle_dir / "Contents" / "Resources"
         source_path = Path(
@@ -41,3 +41,7 @@ class GdkPixbuf(BaseXmlModel):
                     file.write(f'"Frameworks/{match.group(1)}"\n')
                 else:
                     file.write(line)
+
+    def install(self, bundle_dir: Path, source_dir: Path):
+        self._install_frameworks(bundle_dir, source_dir)
+        self._install_resources(bundle_dir, source_dir)

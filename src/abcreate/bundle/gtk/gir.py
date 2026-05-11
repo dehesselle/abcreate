@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import logging
-from pathlib import Path
-from lxml import etree
 import shlex
 import subprocess
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
 
+from lxml import etree
 from pydantic_xml import BaseXmlModel, attr
 
 from abcreate.bundle.library import Library
@@ -37,12 +37,13 @@ class Gir(BaseXmlModel):
         except subprocess.CalledProcessError as e:
             log.error(f"typelib compilation failed\n{e}")
 
-    def install(self, bundle_dir: Path, source_dir: Path):
-        target_dir = bundle_dir / "Contents" / "Resources" / "lib" / "girepository-1.0"
-        target_dir.mkdir(parents=True, exist_ok=True)
-
+    def _install_frameworks(self, bundle_dir: Path, source_dir: Path) -> None:
         library = Library(source_path=Path("libgirepository-1.0.1.dylib"))
         library.install(bundle_dir, source_dir)
+
+    def _install_resources(self, bundle_dir: Path, source_dir: Path) -> None:
+        target_dir = bundle_dir / "Contents" / "Resources" / "lib" / "girepository-1.0"
+        target_dir.mkdir(parents=True, exist_ok=True)
 
         for source_path in Path(source_dir / "share" / "gir-1.0").glob("*.gir"):
             target_path = target_dir / source_path.with_suffix(".typelib").name
@@ -74,3 +75,7 @@ class Gir(BaseXmlModel):
             except KeyError:
                 log.debug(f"no shared-library in {target_path}")
                 self._compile(source_path, target_path)
+
+    def install(self, bundle_dir: Path, source_dir: Path):
+        self._install_frameworks(bundle_dir, source_dir)
+        self._install_resources(bundle_dir, source_dir)

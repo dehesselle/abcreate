@@ -8,13 +8,14 @@ from pathlib import Path
 from pydantic_xml import BaseXmlModel
 
 from abcreate.bundle.library import Library
+from abcreate.bundle.locale import Locale
 from abcreate.bundle.resource import Resource
 
 log = logging.getLogger("glib")
 
 
 class Glib(BaseXmlModel):
-    def install(self, bundle_dir: Path, source_dir: Path):
+    def _install_frameworks(self, bundle_dir: Path, source_dir: Path) -> None:
         library = Library(source_path=Path("libglib-2.0.0.dylib"))
         library.install(bundle_dir, source_dir)
 
@@ -25,5 +26,15 @@ class Glib(BaseXmlModel):
             # for libraries which are not GIO modules).
             library.install(bundle_dir, source_dir)
 
+    def _install_locales(self, bundle_dir: Path, source_dir: Path) -> None:
+        locale = Locale(name="glib20.mo")
+        locale.install(bundle_dir, source_dir)
+
+    def _install_resources(self, bundle_dir: Path, source_dir: Path) -> None:
         resource = Resource(source_path=Path("share/glib-2.0"))
         resource.install(bundle_dir, source_dir)
+
+    def install(self, bundle_dir: Path, source_dir: Path) -> None:
+        self._install_frameworks(bundle_dir, source_dir)
+        self._install_locales(bundle_dir, source_dir)
+        self._install_resources(bundle_dir, source_dir)
