@@ -18,7 +18,7 @@ class Locales(BaseXmlModel):
     locales: List[Locale] = element(tag="locale")
 
     @property
-    def main_locale(self) -> Locale:
+    def main_locale(self) -> Locale | None:
         try:
             return self.locales[0]
         except IndexError:
