@@ -2,16 +2,17 @@
 
 `abcreate` is a CLI tool to create a macOS application bundle from executables, libraries and resource files in a given installation prefix directory. It takes its instructions from an XML based configuration file (see the [examples](examples)).
 
-This tool was built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects. That means it is specifically targeted towards GTK based applications and makes certain assumptions like "I always expect you to specify a GTK version". It is _not_ a general-purpose packaging tool at this point. Features and fixes will be developed as I go and to the extent as required for my projects.
+This tool was built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects. That means it is specifically targeted towards GTK based applications and cannot be used with non-GTK apps. In other words: it is _not_ a general-purpose packaging tool at this point.  
+Features and fixes will be developed as I go and to the extent as required for my projects.
 
-💁 _For the time being, this is to be considered "alpha" software. It works for the cases I need it to work._
+💁 _For the time being, this is to be considered "alpha" software. While I already use it in production, things are still pretty much in motion._
 
 ## Features
 
 - Require as little configuration as possible in a simple XML file that's easy to understand.
 - Automatically pull in linked libraries.
 - Automatically adjust library link paths in executables and libraries with relocatability in mind.
-- Targeted towards GTK based apps (GTK versions 3 and 4), e.g. take care of pixbuf loaders, compile typelib files etc.  
+- Targeted exclusively towards GTK based apps (GTK versions 3 and 4), e.g. take care of pixbuf loaders, compile typelib files etc.  
 
 ## Installation
 
