@@ -1,11 +1,11 @@
 # application bundle creator
 
-`abcreate` is a CLI tool to create a macOS application bundle from executables, libraries and resource files in a given installation prefix directory. It takes its instructions from an XML based configuration file (see the [examples](examples)).
+`abcreate` is a CLI tool to create a macOS application bundle from executables, libraries and resource files in a given installation prefix directory. It takes its instructions from an XML based configuration file (see the [examples](https://github.com/dehesselle/abcreate/tree/main/examples)).
 
-This tool was built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects. That means it is specifically targeted towards GTK based applications and cannot be used with non-GTK apps. In other words: it is _not_ a general-purpose packaging tool at this point.  
+This tool was built to replace [GTK Mac Bundler](https://gitlab.gnome.org/GNOME/gtk-mac-bundler) in my projects. It is specifically targeted towards GTK based applications and not a general-purpose packaging tool at this point.  
 Features and fixes will be developed as I go and to the extent as required for my projects.
 
-💁 _For the time being, this is to be considered "alpha" software. While I already use it in production, things are still pretty much in motion._
+💁 _This is to be considered "beta" software. While I already use it in production, I haven't settled on the final direction._
 
 ## Features
 
@@ -16,7 +16,7 @@ Features and fixes will be developed as I go and to the extent as required for m
 
 ## Installation
 
-`abcreate` is on [PyPi](https://pypi.org/project/abcreate/), simply run:
+`abcreate` is on [PyPi](https://pypi.org/project/abcreate/), you can simply run:
 
 ```bash
 pip install abcreate
